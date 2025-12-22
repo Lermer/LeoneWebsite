@@ -200,9 +200,10 @@ const graphData = await buildGraphData();
         .attr('transform', d => `translate(${d.x},${d.y})`);
     });
 
-    // Drag functions - optimized for smooth, jitter-free interaction
+    // Drag functions - stop simulation during drag for zero jitter
     function dragstarted(event, d) {
-      if (!event.active) simulation.alphaTarget(0.03).restart();
+      // Stop the simulation completely during drag
+      simulation.stop();
       d.fx = d.x;
       d.fy = d.y;
     }
@@ -210,12 +211,25 @@ const graphData = await buildGraphData();
     function dragged(event, d) {
       d.fx = event.x;
       d.fy = event.y;
+
+      // Manually update positions during drag
+      nodeGroup
+        .filter(nd => nd.id === d.id)
+        .attr('transform', `translate(${event.x},${event.y})`);
+
+      // Update connected links
+      link
+        .attr('x1', l => l.source.id === d.id ? event.x : l.source.x)
+        .attr('y1', l => l.source.id === d.id ? event.y : l.source.y)
+        .attr('x2', l => l.target.id === d.id ? event.x : l.target.x)
+        .attr('y2', l => l.target.id === d.id ? event.y : l.target.y);
     }
 
     function dragended(event, d) {
-      if (!event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
+      // Restart simulation after drag with gentle warming
+      simulation.alpha(0.3).restart();
     }
 
     // Handle window resize

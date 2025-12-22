@@ -68,8 +68,10 @@ const graphData = await buildGraphData();
 <body>
   <div id="graph-container"></div>
 
-  <script type="module" define:vars={{ graphData }}>
+  <script type="module" define:vars={{ graphData }} is:inline>
     import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
+
+    console.log('Graph data:', graphData);
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -80,9 +82,14 @@ const graphData = await buildGraphData();
       .attr('width', width)
       .attr('height', height);
 
-    // Create zoom behavior
+    // Create container for zoom
     const g = svg.append('g');
 
+    // Create groups for links and nodes (links first so they render behind)
+    const linkGroup = g.append('g').attr('class', 'links');
+    const nodeGroupContainer = g.append('g').attr('class', 'nodes');
+
+    // Create zoom behavior
     const zoom = d3.zoom()
       .scaleExtent([0.1, 4])
       .on('zoom', (event) => {
@@ -91,32 +98,38 @@ const graphData = await buildGraphData();
 
     svg.call(zoom);
 
-    // Create force simulation
+    // Create force simulation with smoother settings
     const simulation = d3.forceSimulation(graphData.nodes)
       .force('link', d3.forceLink(graphData.links)
         .id(d => d.id)
         .distance(150))
-      .force('charge', d3.forceManyBody().strength(-300))
+      .force('charge', d3.forceManyBody().strength(-400))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(50));
+      .force('collision', d3.forceCollide().radius(60))
+      .alphaDecay(0.02);
 
     // Create links
-    const link = g.append('g')
+    const link = linkGroup
       .selectAll('line')
       .data(graphData.links)
       .join('line')
-      .attr('class', 'link');
+      .attr('class', 'link')
+      .attr('stroke', '#999999')
+      .attr('stroke-width', 1.5)
+      .attr('stroke-opacity', 0.6);
 
     // Create node groups
-    const nodeGroup = g.append('g')
+    const nodeGroup = nodeGroupContainer
       .selectAll('g')
       .data(graphData.nodes)
-      .join('g');
+      .join('g')
+      .attr('class', 'node-group');
 
     // Add circles to nodes
     const node = nodeGroup.append('circle')
-      .attr('class', d => `node ${d.exists ? 'exists' : 'missing'}`)
       .attr('r', 8)
+      .attr('fill', d => d.exists ? '#000000' : '#999999')
+      .attr('cursor', 'pointer')
       .call(d3.drag()
         .on('start', dragstarted)
         .on('drag', dragged)
@@ -126,38 +139,52 @@ const graphData = await buildGraphData();
     nodeGroup.append('text')
       .attr('class', 'label')
       .attr('dy', 20)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '12px')
+      .attr('fill', '#333333')
+      .attr('pointer-events', 'none')
       .text(d => d.label);
 
     // Click interaction
     let selectedNode = null;
 
-    node.on('click', function(event, d) {
+    nodeGroup.on('click', function(event, d) {
       event.stopPropagation();
-
-      // Reset previous selection
-      node.classed('selected', false);
-      link.classed('selected', false);
 
       if (selectedNode === d.id) {
         // Deselect if clicking the same node
         selectedNode = null;
+        node.attr('fill', nd => nd.exists ? '#000000' : '#999999');
+        link.attr('stroke', '#999999').attr('stroke-opacity', 0.6);
       } else {
         // Select new node
         selectedNode = d.id;
-        d3.select(this).classed('selected', true);
 
-        // Highlight connected links
-        link.classed('selected', l =>
-          l.source.id === d.id || l.target.id === d.id
-        );
+        // Update node colors
+        node.attr('fill', nd => {
+          if (nd.id === d.id) return '#4169E1'; // Royal blue for selected
+          return nd.exists ? '#000000' : '#999999'; // Default colors
+        });
+
+        // Update link colors
+        link.attr('stroke', l => {
+          const sourceId = typeof l.source === 'object' ? l.source.id : l.source;
+          const targetId = typeof l.target === 'object' ? l.target.id : l.target;
+          return (sourceId === d.id || targetId === d.id) ? '#4169E1' : '#999999';
+        })
+        .attr('stroke-opacity', l => {
+          const sourceId = typeof l.source === 'object' ? l.source.id : l.source;
+          const targetId = typeof l.target === 'object' ? l.target.id : l.target;
+          return (sourceId === d.id || targetId === d.id) ? 1 : 0.6;
+        });
       }
     });
 
     // Click on background to deselect
     svg.on('click', () => {
       selectedNode = null;
-      node.classed('selected', false);
-      link.classed('selected', false);
+      node.attr('fill', d => d.exists ? '#000000' : '#999999');
+      link.attr('stroke', '#999999').attr('stroke-opacity', 0.6);
     });
 
     // Update positions on tick
@@ -172,22 +199,22 @@ const graphData = await buildGraphData();
         .attr('transform', d => `translate(${d.x},${d.y})`);
     });
 
-    // Drag functions
-    function dragstarted(event) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
+    // Drag functions - improved for smoother interaction
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.1).restart();
+      d.fx = d.x;
+      d.fy = d.y;
     }
 
-    function dragged(event) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
     }
 
-    function dragended(event) {
+    function dragended(event, d) {
       if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
+      d.fx = null;
+      d.fy = null;
     }
 
     // Handle window resize

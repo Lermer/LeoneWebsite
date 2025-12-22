@@ -27,177 +27,173 @@ const graphData = await buildGraphData();
       width: 100vw;
       height: 100vh;
     }
-
-    .node {
-      cursor: pointer;
-      transition: fill 0.2s ease;
-    }
-
-    .node.exists {
-      fill: #000000;
-    }
-
-    .node.missing {
-      fill: #999999;
-    }
-
-    .node.selected {
-      fill: #4169E1 !important; /* Royal blue */
-    }
-
-    .link {
-      stroke: #999999;
-      stroke-width: 1.5px;
-      stroke-opacity: 0.6;
-    }
-
-    .link.selected {
-      stroke: #4169E1; /* Royal blue */
-      stroke-opacity: 1;
-    }
-
-    .label {
-      font-size: 12px;
-      fill: #333333;
-      text-anchor: middle;
-      pointer-events: none;
-      user-select: none;
-    }
   </style>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
 <body>
   <div id="graph-container"></div>
 
-  <script type="module" define:vars={{ graphData }}>
-    import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
+  <script type="module" define:vars={{ graphData }} is:inline>
+    console.log('Graph data:', graphData);
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    // Transform data for vis.js
+    const nodes = new vis.DataSet(
+      graphData.nodes.map(node => ({
+        id: node.id,
+        label: node.label,
+        color: node.exists ? '#000000' : '#999999',
+        font: {
+          color: '#333333',
+          size: 12,
+          face: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        },
+        shape: 'dot',
+        size: 8
+      }))
+    );
 
-    // Create SVG
-    const svg = d3.select('#graph-container')
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
+    const edges = new vis.DataSet(
+      graphData.links.map((link, index) => ({
+        id: index,
+        from: link.source,
+        to: link.target,
+        color: {
+          color: '#999999',
+          opacity: 0.6
+        },
+        width: 1.5,
+        smooth: {
+          type: 'continuous'
+        }
+      }))
+    );
 
-    // Create zoom behavior
-    const g = svg.append('g');
+    // Create network
+    const container = document.getElementById('graph-container');
+    const data = { nodes, edges };
 
-    const zoom = d3.zoom()
-      .scaleExtent([0.1, 4])
-      .on('zoom', (event) => {
-        g.attr('transform', event.transform);
-      });
+    const options = {
+      physics: {
+        enabled: true,
+        forceAtlas2Based: {
+          gravitationalConstant: -50,
+          centralGravity: 0.01,
+          springLength: 150,
+          springConstant: 0.08,
+          damping: 0.4,
+          avoidOverlap: 0.5
+        },
+        maxVelocity: 50,
+        solver: 'forceAtlas2Based',
+        timestep: 0.35,
+        stabilization: {
+          enabled: true,
+          iterations: 1000,
+          updateInterval: 25
+        }
+      },
+      interaction: {
+        dragNodes: true,
+        dragView: true,
+        zoomView: true,
+        hover: true,
+        navigationButtons: false,
+        keyboard: false
+      },
+      nodes: {
+        borderWidth: 0,
+        borderWidthSelected: 0
+      },
+      edges: {
+        selectionWidth: 0
+      }
+    };
 
-    svg.call(zoom);
+    const network = new vis.Network(container, data, options);
 
-    // Create force simulation
-    const simulation = d3.forceSimulation(graphData.nodes)
-      .force('link', d3.forceLink(graphData.links)
-        .id(d => d.id)
-        .distance(150))
-      .force('charge', d3.forceManyBody().strength(-300))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(50));
-
-    // Create links
-    const link = g.append('g')
-      .selectAll('line')
-      .data(graphData.links)
-      .join('line')
-      .attr('class', 'link');
-
-    // Create node groups
-    const nodeGroup = g.append('g')
-      .selectAll('g')
-      .data(graphData.nodes)
-      .join('g');
-
-    // Add circles to nodes
-    const node = nodeGroup.append('circle')
-      .attr('class', d => `node ${d.exists ? 'exists' : 'missing'}`)
-      .attr('r', 8)
-      .call(d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended));
-
-    // Add labels below nodes
-    nodeGroup.append('text')
-      .attr('class', 'label')
-      .attr('dy', 20)
-      .text(d => d.label);
-
-    // Click interaction
+    // Track selected node
     let selectedNode = null;
 
-    node.on('click', function(event, d) {
-      event.stopPropagation();
+    // Click handler
+    network.on('click', function(params) {
+      if (params.nodes.length > 0) {
+        const nodeId = params.nodes[0];
 
-      // Reset previous selection
-      node.classed('selected', false);
-      link.classed('selected', false);
+        if (selectedNode === nodeId) {
+          // Deselect
+          selectedNode = null;
 
-      if (selectedNode === d.id) {
-        // Deselect if clicking the same node
-        selectedNode = null;
+          // Reset all nodes
+          graphData.nodes.forEach(n => {
+            nodes.update({
+              id: n.id,
+              color: n.exists ? '#000000' : '#999999'
+            });
+          });
+
+          // Reset all edges
+          edges.forEach(e => {
+            edges.update({
+              id: e.id,
+              color: {
+                color: '#999999',
+                opacity: 0.6
+              }
+            });
+          });
+        } else {
+          // Select node
+          selectedNode = nodeId;
+
+          // Update nodes
+          graphData.nodes.forEach(n => {
+            nodes.update({
+              id: n.id,
+              color: n.id === nodeId ? '#4169E1' : (n.exists ? '#000000' : '#999999')
+            });
+          });
+
+          // Update edges
+          const connectedEdges = network.getConnectedEdges(nodeId);
+          edges.forEach(e => {
+            const isConnected = connectedEdges.includes(String(e.id));
+            edges.update({
+              id: e.id,
+              color: {
+                color: isConnected ? '#4169E1' : '#999999',
+                opacity: isConnected ? 1 : 0.6
+              }
+            });
+          });
+        }
       } else {
-        // Select new node
-        selectedNode = d.id;
-        d3.select(this).classed('selected', true);
+        // Clicked on canvas - deselect all
+        selectedNode = null;
 
-        // Highlight connected links
-        link.classed('selected', l =>
-          l.source.id === d.id || l.target.id === d.id
-        );
+        // Reset all nodes
+        graphData.nodes.forEach(n => {
+          nodes.update({
+            id: n.id,
+            color: n.exists ? '#000000' : '#999999'
+          });
+        });
+
+        // Reset all edges
+        edges.forEach(e => {
+          edges.update({
+            id: e.id,
+            color: {
+              color: '#999999',
+              opacity: 0.6
+            }
+          });
+        });
       }
     });
 
-    // Click on background to deselect
-    svg.on('click', () => {
-      selectedNode = null;
-      node.classed('selected', false);
-      link.classed('selected', false);
-    });
-
-    // Update positions on tick
-    simulation.on('tick', () => {
-      link
-        .attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
-
-      nodeGroup
-        .attr('transform', d => `translate(${d.x},${d.y})`);
-    });
-
-    // Drag functions
-    function dragstarted(event) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    }
-
-    function dragged(event) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    }
-
-    function dragended(event) {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    }
-
     // Handle window resize
     window.addEventListener('resize', () => {
-      const newWidth = window.innerWidth;
-      const newHeight = window.innerHeight;
-
-      svg.attr('width', newWidth).attr('height', newHeight);
-      simulation.force('center', d3.forceCenter(newWidth / 2, newHeight / 2));
-      simulation.alpha(0.3).restart();
+      network.fit();
     });
   </script>
 </body>

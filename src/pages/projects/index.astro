@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const projects = await getCollection('projects');
+
+// Sort projects by date (newest first)
+projects.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Projects - Leone Ermer">
+  <h1>Projects</h1>
+
+  <div class="projects">
+    {projects.map((project) => (
+      <article>
+        <h2>
+          <a href={`/projects/${project.slug}`}>{project.data.title}</a>
+        </h2>
+        <p>{project.data.description}</p>
+        {project.data.tags && (
+          <div class="tags">
+            {project.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        )}
+        {(project.data.projectUrl || project.data.githubUrl) && (
+          <div class="links">
+            {project.data.projectUrl && (
+              <a href={project.data.projectUrl} target="_blank" rel="noopener noreferrer">View Project →</a>
+            )}
+            {project.data.githubUrl && (
+              <a href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">GitHub →</a>
+            )}
+          </div>
+        )}
+      </article>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .projects {
+    display: grid;
+    gap: 2rem;
+  }
+
+  article {
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+  }
+
+  h2 a {
+    text-decoration: none;
+    color: #333;
+  }
+
+  h2 a:hover {
+    color: #0066cc;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    background: #f0f0f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .links {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .links a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .links a:hover {
+    text-decoration: underline;
+  }
+</style>

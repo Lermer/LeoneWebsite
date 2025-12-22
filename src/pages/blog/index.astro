@@ -1,0 +1,86 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const blogPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+
+// Sort posts by date (newest first)
+blogPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Blog - Leone Ermer">
+  <h1>Blog</h1>
+
+  <div class="posts">
+    {blogPosts.map((post) => (
+      <article>
+        <h2>
+          <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+        </h2>
+        <p class="date">{post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p>{post.data.description}</p>
+        {post.data.tags && (
+          <div class="tags">
+            {post.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        )}
+      </article>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .posts {
+    display: grid;
+    gap: 2rem;
+  }
+
+  article {
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+  }
+
+  h2 a {
+    text-decoration: none;
+    color: #333;
+  }
+
+  h2 a:hover {
+    color: #0066cc;
+  }
+
+  .date {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    background: #f0f0f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+</style>

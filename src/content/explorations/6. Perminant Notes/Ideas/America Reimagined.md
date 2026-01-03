@@ -4,13 +4,15 @@ Date Created: 2025-12-26
 Category: Ideas
 tags:
   - Work
+Public?: true
+In Process?: true
 ---
 
 ## The Motivation
 
 When did America become so set in stone? 
 
-For a long time I have been frustrated with the feeling that America has lost it's ability to adapt to meet the needs of constituents. No new amendments to the constitution have been added in my lifetime, while the ERA sits unratified, leaving the rights or millions of Americans' at the mercy of whichever party current holds power. 
+For a long time I have been frustrated with the feeling that the United States has lost it's ability to adapt to meet the needs the American people. No new amendments to the constitution have been added in my lifetime, while the ERA sits unratified, leaving the rights or millions of Americans' at the mercy of whichever party current holds power. 
 
 Our representation doesn't represent us. 
 The electoral collage is flawed.

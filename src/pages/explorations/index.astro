@@ -118,13 +118,13 @@ const graphData = await buildGraphData();
             gravitationalConstant: -26,      // Moderate gravity for responsiveness
             centralGravity: 0.005,           // Slight central pull
             springLength: 150,
-            springConstant: 0.04,            // Softer springs for smooth movement
-            damping: 0.65,                   // Higher damping for smooth, flowing motion
+            springConstant: 0.03,            // Very soft springs for smooth movement
+            damping: 0.85,                   // Very high damping for gradual momentum loss
             avoidOverlap: 0.3
           },
-          maxVelocity: 25,                   // Allow faster movement
+          maxVelocity: 15,                   // Lower max speed for smoother settling
           solver: 'forceAtlas2Based',
-          timestep: 0.35                     // Smaller timestep for smoother animation
+          timestep: 0.4                      // Slightly larger timestep for fluid motion
         }
       });
     });

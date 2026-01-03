@@ -127,41 +127,41 @@ const graphData = await buildGraphData();
     <div class="control-group">
       <label>
         <span>Gravitational Constant</span>
-        <span class="value-display" id="gravitationalConstant-value">-26</span>
+        <span class="value-display" id="gravitationalConstant-value">-55</span>
       </label>
-      <input type="range" id="gravitationalConstant" min="-100" max="-1" step="1" value="-26">
+      <input type="range" id="gravitationalConstant" min="-200" max="-1" step="1" value="-55">
     </div>
 
     <div class="control-group">
       <label>
         <span>Central Gravity</span>
-        <span class="value-display" id="centralGravity-value">0.005</span>
+        <span class="value-display" id="centralGravity-value">0.011</span>
       </label>
-      <input type="range" id="centralGravity" min="0" max="0.1" step="0.001" value="0.005">
+      <input type="range" id="centralGravity" min="0" max="0.05" step="0.001" value="0.011">
     </div>
 
     <div class="control-group">
       <label>
         <span>Spring Length</span>
-        <span class="value-display" id="springLength-value">150</span>
+        <span class="value-display" id="springLength-value">120</span>
       </label>
-      <input type="range" id="springLength" min="50" max="300" step="10" value="150">
+      <input type="range" id="springLength" min="50" max="300" step="10" value="120">
     </div>
 
     <div class="control-group">
       <label>
         <span>Spring Constant (elasticity)</span>
-        <span class="value-display" id="springConstant-value">0.08</span>
+        <span class="value-display" id="springConstant-value">0.2</span>
       </label>
-      <input type="range" id="springConstant" min="0.01" max="0.2" step="0.01" value="0.08">
+      <input type="range" id="springConstant" min="0.01" max="0.5" step="0.01" value="0.2">
     </div>
 
     <div class="control-group">
       <label>
         <span>Damping (velocity decay)</span>
-        <span class="value-display" id="damping-value">0.6</span>
+        <span class="value-display" id="damping-value">0.99</span>
       </label>
-      <input type="range" id="damping" min="0.1" max="0.99" step="0.01" value="0.6">
+      <input type="range" id="damping" min="0.1" max="0.999" step="0.001" value="0.99">
     </div>
 
     <div class="control-group">
@@ -175,17 +175,17 @@ const graphData = await buildGraphData();
     <div class="control-group">
       <label>
         <span>Max Velocity</span>
-        <span class="value-display" id="maxVelocity-value">30</span>
+        <span class="value-display" id="maxVelocity-value">8</span>
       </label>
-      <input type="range" id="maxVelocity" min="1" max="50" step="1" value="30">
+      <input type="range" id="maxVelocity" min="1" max="50" step="1" value="8">
     </div>
 
     <div class="control-group">
       <label>
         <span>Timestep</span>
-        <span class="value-display" id="timestep-value">0.4</span>
+        <span class="value-display" id="timestep-value">0.1</span>
       </label>
-      <input type="range" id="timestep" min="0.1" max="1" step="0.05" value="0.4">
+      <input type="range" id="timestep" min="0.01" max="1" step="0.01" value="0.1">
     </div>
 
     <button id="copy-button">Copy Settings</button>
@@ -271,14 +271,14 @@ const graphData = await buildGraphData();
 
     // Physics parameters object (will be used by sliders)
     const physicsParams = {
-      gravitationalConstant: -26,
-      centralGravity: 0.005,
-      springLength: 150,
-      springConstant: 0.08,
-      damping: 0.6,
+      gravitationalConstant: -55,
+      centralGravity: 0.011,
+      springLength: 120,
+      springConstant: 0.2,
+      damping: 0.99,
       avoidOverlap: 0.3,
-      maxVelocity: 30,
-      timestep: 0.4
+      maxVelocity: 8,
+      timestep: 0.1
     };
 
     function updatePhysics() {

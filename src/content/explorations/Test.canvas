@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"8db0821f4c5f42c2","x":-285,"y":-183,"width":400,"height":400,"type":"file","file":"2. Research/People/Yoko Ono.md"},
+		{"id":"eca9f9e1c2683f63","x":260,"y":-100,"width":400,"height":400,"type":"file","file":"2. Research/People/Brian Eno.md"}
+	],
+	"edges":[
+		{"id":"86ab003d3caef099","fromNode":"8db0821f4c5f42c2","fromSide":"right","toNode":"eca9f9e1c2683f63","toSide":"left"}
+	]
+}

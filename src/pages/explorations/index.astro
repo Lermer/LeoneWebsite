@@ -109,6 +109,26 @@ const graphData = await buildGraphData();
 
     const network = new vis.Network(container, data, options);
 
+    // After stabilization, enable gentle continuous physics for a subtle floating effect
+    network.once('stabilizationIterationsDone', () => {
+      network.setOptions({
+        physics: {
+          enabled: true,
+          forceAtlas2Based: {
+            gravitationalConstant: -5,      // Much weaker gravity
+            centralGravity: 0.002,           // Very slight central pull
+            springLength: 150,
+            springConstant: 0.01,            // Much looser springs
+            damping: 0.9,                    // High damping for smooth, slow movement
+            avoidOverlap: 0.1
+          },
+          maxVelocity: 2,                    // Very slow maximum speed
+          solver: 'forceAtlas2Based',
+          timestep: 0.5
+        }
+      });
+    });
+
     // Track selected node
     let selectedNode = null;
 
@@ -192,134 +212,6 @@ const graphData = await buildGraphData();
     // Handle window resize
     window.addEventListener('resize', () => {
       network.fit();
-    });
-
-    // Subtle mouse interaction effects
-    let mouseX = 0;
-    let mouseY = 0;
-    let isDragging = false;
-    const nodeOriginalPositions = new Map();
-
-    // Store original positions after stabilization
-    network.once('stabilizationIterationsDone', () => {
-      const positions = network.getPositions();
-      Object.entries(positions).forEach(([nodeId, pos]) => {
-        nodeOriginalPositions.set(nodeId, { x: pos.x, y: pos.y });
-      });
-    });
-
-    // Track mouse position
-    container.addEventListener('mousemove', (event) => {
-      mouseX = event.clientX;
-      mouseY = event.clientY;
-    });
-
-    // Track dragging state
-    network.on('dragStart', () => {
-      isDragging = true;
-    });
-
-    network.on('dragEnd', () => {
-      isDragging = false;
-      // Update original positions after drag
-      setTimeout(() => {
-        const positions = network.getPositions();
-        Object.entries(positions).forEach(([nodeId, pos]) => {
-          nodeOriginalPositions.set(nodeId, { x: pos.x, y: pos.y });
-        });
-      }, 100);
-    });
-
-    // Subtle parallax and repulsion effect
-    let animationFrameId;
-    const REPULSION_RADIUS = 120; // Distance at which repulsion starts
-    const REPULSION_STRENGTH = 25; // Max pixels to push away
-    const PARALLAX_STRENGTH = 0.015; // How much the view shifts (1.5%)
-
-    function updateMouseEffects() {
-      if (!isDragging && nodeOriginalPositions.size > 0) {
-        // Get canvas position in DOM coordinates
-        const canvasPos = network.getViewPosition();
-        const scale = network.getScale();
-
-        // Convert mouse position to canvas coordinates
-        const DOMtoCanvas = network.DOMtoCanvas({ x: mouseX, y: mouseY });
-
-        // Apply subtle parallax effect to the view
-        const centerX = container.clientWidth / 2;
-        const centerY = container.clientHeight / 2;
-        const offsetX = (mouseX - centerX) * PARALLAX_STRENGTH;
-        const offsetY = (mouseY - centerY) * PARALLAX_STRENGTH;
-
-        // Smoothly move view (very subtle)
-        const currentPos = network.getViewPosition();
-        const targetX = canvasPos.x - offsetX;
-        const targetY = canvasPos.y - offsetY;
-
-        network.moveTo({
-          position: {
-            x: currentPos.x + (targetX - currentPos.x) * 0.05,
-            y: currentPos.y + (targetY - currentPos.y) * 0.05
-          },
-          animation: false
-        });
-
-        // Apply gentle repulsion to nearby nodes
-        const positions = network.getPositions();
-        const updates = [];
-
-        Object.entries(positions).forEach(([nodeId, pos]) => {
-          const original = nodeOriginalPositions.get(nodeId);
-          if (!original) return;
-
-          // Calculate distance from mouse to node
-          const dx = pos.x - DOMtoCanvas.x;
-          const dy = pos.y - DOMtoCanvas.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < REPULSION_RADIUS && distance > 0) {
-            // Calculate repulsion force (stronger when closer)
-            const force = (1 - distance / REPULSION_RADIUS) * REPULSION_STRENGTH;
-            const angle = Math.atan2(dy, dx);
-
-            // Apply repulsion from mouse position
-            const repelX = Math.cos(angle) * force;
-            const repelY = Math.sin(angle) * force;
-
-            updates.push({
-              id: nodeId,
-              x: original.x + repelX,
-              y: original.y + repelY
-            });
-          } else {
-            // Gently return to original position
-            const returnSpeed = 0.1;
-            updates.push({
-              id: nodeId,
-              x: pos.x + (original.x - pos.x) * returnSpeed,
-              y: pos.y + (original.y - pos.y) * returnSpeed
-            });
-          }
-        });
-
-        if (updates.length > 0) {
-          network.body.data.nodes.update(updates);
-        }
-      }
-
-      animationFrameId = requestAnimationFrame(updateMouseEffects);
-    }
-
-    // Start the animation loop after stabilization
-    network.once('stabilizationIterationsDone', () => {
-      updateMouseEffects();
-    });
-
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
     });
   </script>
 </body>

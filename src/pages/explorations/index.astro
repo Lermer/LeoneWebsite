@@ -109,22 +109,22 @@ const graphData = await buildGraphData();
 
     const network = new vis.Network(container, data, options);
 
-    // After stabilization, enable gentle continuous physics for a subtle floating effect
+    // After stabilization, keep physics running for bouncy, responsive interaction
     network.once('stabilizationIterationsDone', () => {
       network.setOptions({
         physics: {
           enabled: true,
           forceAtlas2Based: {
-            gravitationalConstant: -5,      // Much weaker gravity
-            centralGravity: 0.002,           // Very slight central pull
+            gravitationalConstant: -26,      // Moderate gravity for responsiveness
+            centralGravity: 0.005,           // Slight central pull
             springLength: 150,
-            springConstant: 0.01,            // Much looser springs
-            damping: 0.9,                    // High damping for smooth, slow movement
-            avoidOverlap: 0.1
+            springConstant: 0.06,            // Bouncy springs
+            damping: 0.35,                   // Lower damping for more bounce
+            avoidOverlap: 0.3
           },
-          maxVelocity: 2,                    // Very slow maximum speed
+          maxVelocity: 25,                   // Allow faster movement
           solver: 'forceAtlas2Based',
-          timestep: 0.5
+          timestep: 0.4
         }
       });
     });

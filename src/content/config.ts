@@ -34,6 +34,7 @@ const explorations = defineCollection({
     'Date Motified': z.coerce.date().nullable().optional(),
     Category: z.string().nullable().optional(),
     tags: z.array(z.string()).nullable().optional(),
+    Public: z.boolean().optional(),
   }),
 });
 

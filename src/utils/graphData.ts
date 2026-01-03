@@ -35,12 +35,15 @@ function extractWikiLinks(content: string): string[] {
 }
 
 export async function buildGraphData(): Promise<GraphData> {
-  const explorations = await getCollection('explorations');
+  const allExplorations = await getCollection('explorations');
+
+  // Filter to only include explorations with Public: true
+  const explorations = allExplorations.filter(entry => entry.data.Public === true);
 
   const nodes = new Map<string, GraphNode>();
   const links: GraphLink[] = [];
 
-  // First pass: create nodes for all existing files
+  // First pass: create nodes for all existing public files
   for (const entry of explorations) {
     const slug = entry.slug;
     const title = pathToTitle(entry.id);

@@ -150,18 +150,18 @@ const graphData = await buildGraphData();
 
     <div class="control-group">
       <label>
-        <span>Spring Constant</span>
-        <span class="value-display" id="springConstant-value">0.03</span>
+        <span>Spring Constant (elasticity)</span>
+        <span class="value-display" id="springConstant-value">0.08</span>
       </label>
-      <input type="range" id="springConstant" min="0.01" max="0.2" step="0.01" value="0.03">
+      <input type="range" id="springConstant" min="0.01" max="0.2" step="0.01" value="0.08">
     </div>
 
     <div class="control-group">
       <label>
-        <span>Damping</span>
-        <span class="value-display" id="damping-value">0.85</span>
+        <span>Damping (lower = more bounce)</span>
+        <span class="value-display" id="damping-value">0.3</span>
       </label>
-      <input type="range" id="damping" min="0.1" max="0.99" step="0.01" value="0.85">
+      <input type="range" id="damping" min="0.1" max="0.99" step="0.01" value="0.3">
     </div>
 
     <div class="control-group">
@@ -175,9 +175,9 @@ const graphData = await buildGraphData();
     <div class="control-group">
       <label>
         <span>Max Velocity</span>
-        <span class="value-display" id="maxVelocity-value">15</span>
+        <span class="value-display" id="maxVelocity-value">30</span>
       </label>
-      <input type="range" id="maxVelocity" min="1" max="50" step="1" value="15">
+      <input type="range" id="maxVelocity" min="1" max="50" step="1" value="30">
     </div>
 
     <div class="control-group">
@@ -274,10 +274,10 @@ const graphData = await buildGraphData();
       gravitationalConstant: -26,
       centralGravity: 0.005,
       springLength: 150,
-      springConstant: 0.03,
-      damping: 0.85,
+      springConstant: 0.08,
+      damping: 0.3,
       avoidOverlap: 0.3,
-      maxVelocity: 15,
+      maxVelocity: 30,
       timestep: 0.4
     };
 

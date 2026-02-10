@@ -1,103 +1,183 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const projects = await getCollection('projects');
-
-// Sort projects by date (newest first)
-projects.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const categories = [
+  {
+    name: 'Personal',
+    slug: 'personal',
+    description: 'Self-initiated projects and creative explorations',
+  },
+  {
+    name: 'Professional',
+    slug: 'professional',
+    description: 'Client work and collaborative projects',
+  },
+  {
+    name: 'Branding',
+    slug: 'branding',
+    description: 'Brand identity systems and visual language',
+  },
+  {
+    name: 'Logo Design',
+    slug: 'logo-design',
+    description: 'Marks, wordmarks, and symbol systems',
+  },
+  {
+    name: 'Experiential Design',
+    slug: 'experiential-design',
+    description: 'Environments, installations, and spatial experiences',
+  },
+];
 ---
 
-<BaseLayout title="Projects - Leone Ermer">
-  <h1>Projects</h1>
+<BaseLayout title="Portfolio - Leone Ermer">
+  <div class="portfolio-page">
+    <header class="portfolio-header">
+      <h1>Portfolio</h1>
+      <p class="subtitle">{categories.length} Categories</p>
+    </header>
 
-  <div class="projects">
-    {projects.map((project) => (
-      <article>
-        <h2>
-          <a href={`/projects/${project.slug}`}>{project.data.title}</a>
-        </h2>
-        <p>{project.data.description}</p>
-        {project.data.tags && (
-          <div class="tags">
-            {project.data.tags.map((tag) => (
-              <span class="tag">{tag}</span>
-            ))}
+    <div class="category-grid">
+      {categories.map((cat) => (
+        <a href={`/projects/${cat.slug}`} class="category-tile">
+          <div class="tile-inner">
+            <span class="category-name">{cat.name}</span>
+            <span class="category-arrow">&rarr;</span>
           </div>
-        )}
-        {(project.data.projectUrl || project.data.githubUrl) && (
-          <div class="links">
-            {project.data.projectUrl && (
-              <a href={project.data.projectUrl} target="_blank" rel="noopener noreferrer">View Project →</a>
-            )}
-            {project.data.githubUrl && (
-              <a href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">GitHub →</a>
-            )}
-          </div>
-        )}
-      </article>
-    ))}
+          <p class="category-description">{cat.description}</p>
+        </a>
+      ))}
+    </div>
   </div>
 </BaseLayout>
 
 <style>
+  .portfolio-page {
+    padding: 2rem 0 4rem;
+  }
+
+  .portfolio-header {
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #000;
+  }
+
   h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .projects {
-    display: grid;
-    gap: 2rem;
-  }
-
-  article {
-    padding: 1.5rem;
-    border: 1px solid #eee;
-    border-radius: 8px;
-  }
-
-  h2 {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
     margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
+    color: #000;
   }
 
-  h2 a {
-    text-decoration: none;
-    color: #333;
-  }
-
-  h2 a:hover {
-    color: #0066cc;
-  }
-
-  .tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-  }
-
-  .tag {
-    background: #f0f0f0;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
+  .subtitle {
+    font-family: 'Roboto Mono', monospace;
     font-size: 0.85rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #999;
+    margin: 0;
   }
 
-  .links {
-    margin-top: 1rem;
-    display: flex;
-    gap: 1rem;
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: #000;
+    border: 1px solid #000;
   }
 
-  .links a {
-    color: #0066cc;
+  .category-tile {
+    background: #fff;
+    padding: 2.5rem 2rem;
     text-decoration: none;
-    font-weight: 500;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 200px;
+    transition: background 0.3s ease, color 0.3s ease;
   }
 
-  .links a:hover {
-    text-decoration: underline;
+  .category-tile:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .tile-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .category-name {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    max-width: 80%;
+  }
+
+  .category-arrow {
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-8px);
+  }
+
+  .category-tile:hover .category-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .category-description {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 300;
+    line-height: 1.5;
+    color: #666;
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+
+  .category-tile:hover .category-description {
+    color: #999;
+  }
+
+  /* Last tile spans full width if odd number */
+  .category-tile:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 768px) {
+    .portfolio-page {
+      padding: 1rem 0 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+    }
+
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .category-tile {
+      min-height: 150px;
+      padding: 2rem 1.5rem;
+    }
+
+    .category-name {
+      font-size: 1.25rem;
+    }
+
+    .category-arrow {
+      opacity: 1;
+    }
   }
 </style>

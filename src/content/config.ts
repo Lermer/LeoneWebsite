@@ -21,6 +21,7 @@ const projects = defineCollection({
     pubDate: z.coerce.date(),
     heroImage: z.string().optional(),
     tags: z.array(z.string()).optional(),
+    category: z.enum(['personal', 'professional', 'branding', 'logo-design', 'experiential-design']).optional(),
     projectUrl: z.string().url().optional(),
     githubUrl: z.string().url().optional(),
     featured: z.boolean().optional(),

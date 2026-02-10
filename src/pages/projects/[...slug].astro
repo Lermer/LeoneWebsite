@@ -3,59 +3,337 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
+  const categories: Record<string, { name: string }> = {
+    'personal': { name: 'Personal' },
+    'professional': { name: 'Professional' },
+    'branding': { name: 'Branding' },
+    'logo-design': { name: 'Logo Design' },
+    'experiential-design': { name: 'Experiential Design' },
+  };
+
   const projects = await getCollection('projects');
-  return projects.map((project) => ({
+
+  const projectPaths = projects.map((project) => ({
     params: { slug: project.slug },
-    props: { project },
+    props: { type: 'project' as const, project: project, categorySlug: '', categoryName: '' },
   }));
+
+  const categoryPaths = Object.entries(categories).map(([slug, info]) => ({
+    params: { slug },
+    props: { type: 'category' as const, project: null, categorySlug: slug, categoryName: info.name },
+  }));
+
+  return [...categoryPaths, ...projectPaths];
 }
 
-const { project } = Astro.props;
-const { Content } = await project.render();
+const ALL_CATEGORIES = [
+  { name: 'Personal', slug: 'personal' },
+  { name: 'Professional', slug: 'professional' },
+  { name: 'Branding', slug: 'branding' },
+  { name: 'Logo Design', slug: 'logo-design' },
+  { name: 'Experiential Design', slug: 'experiential-design' },
+];
+
+const { type, project: projectProp, categorySlug, categoryName } = Astro.props;
+
+let categoryProjects: any[] = [];
+let project: any = null;
+let Content: any = null;
+let allProjects: any[] = [];
+
+if (type === 'category') {
+  allProjects = await getCollection('projects');
+  categoryProjects = allProjects
+    .filter((p) => p.data.category === categorySlug)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+} else {
+  project = projectProp;
+  const rendered = await project.render();
+  Content = rendered.Content;
+  allProjects = await getCollection('projects');
+}
+
+const totalCount = allProjects.length;
 ---
 
-<BaseLayout title={project.data.title} description={project.data.description}>
-  <article>
-    <header>
-      <h1>{project.data.title}</h1>
-      {project.data.tags && (
-        <div class="tags">
-          {project.data.tags.map((tag) => (
-            <span class="tag">{tag}</span>
-          ))}
-        </div>
-      )}
-      {(project.data.projectUrl || project.data.githubUrl) && (
-        <div class="links">
-          {project.data.projectUrl && (
-            <a href={project.data.projectUrl} target="_blank" rel="noopener noreferrer">View Project →</a>
-          )}
-          {project.data.githubUrl && (
-            <a href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">GitHub →</a>
-          )}
-        </div>
-      )}
-    </header>
+{type === 'category' ? (
+  <BaseLayout title={`${categoryName} - Portfolio - Leone Ermer`}>
+    <div class="shop-page">
+      <div class="shop-topbar">
+        <a href="/projects" class="back-link">&larr; All</a>
+        <span class="result-count">{categoryProjects.length} Results</span>
+      </div>
 
-    <div class="content">
-      <Content />
+      <h1 class="shop-title">{categoryName.toUpperCase()}</h1>
+
+      <div class="shop-layout">
+        <aside class="sidebar">
+          <div class="filter-group">
+            <a href="/projects" class="filter-item">
+              All <span class="filter-count">({totalCount})</span>
+            </a>
+            {ALL_CATEGORIES.map((cat) => (
+              <a
+                href={`/projects/${cat.slug}`}
+                class={`filter-item ${cat.slug === categorySlug ? 'active' : ''}`}
+              >
+                {cat.name} <span class="filter-count">({allProjects.filter(p => p.data.category === cat.slug).length})</span>
+              </a>
+            ))}
+          </div>
+        </aside>
+
+        <div class="product-grid">
+          {categoryProjects.length > 0 ? (
+            categoryProjects.map((p) => (
+              <a href={`/projects/${p.slug}`} class="product-card">
+                <div class="product-image">
+                  {p.data.heroImage ? (
+                    <img src={p.data.heroImage} alt={p.data.title} />
+                  ) : (
+                    <span class="placeholder-text">{p.data.title.charAt(0)}</span>
+                  )}
+                </div>
+                <div class="product-info">
+                  <span class="product-name">{p.data.title}</span>
+                  <span class="product-meta">{new Date(p.data.pubDate).getFullYear()}</span>
+                </div>
+              </a>
+            ))
+          ) : (
+            <div class="empty-state">
+              <p>No projects yet.</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-  </article>
-</BaseLayout>
+  </BaseLayout>
+) : project ? (
+  <BaseLayout title={project.data.title} description={project.data.description}>
+    <div class="detail-page">
+      <div class="shop-topbar">
+        <a href={project.data.category ? `/projects/${project.data.category}` : '/projects'} class="back-link">
+          &larr; Back
+        </a>
+      </div>
+
+      <article class="project-detail">
+        <header>
+          <h1>{project.data.title}</h1>
+          {project.data.tags && (
+            <div class="tags">
+              {project.data.tags.map((tag: string) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+          {(project.data.projectUrl || project.data.githubUrl) && (
+            <div class="links">
+              {project.data.projectUrl && (
+                <a href={project.data.projectUrl} target="_blank" rel="noopener noreferrer">View Project &rarr;</a>
+              )}
+              {project.data.githubUrl && (
+                <a href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">GitHub &rarr;</a>
+              )}
+            </div>
+          )}
+        </header>
+
+        <div class="content">
+          <Content />
+        </div>
+      </article>
+    </div>
+  </BaseLayout>
+) : null}
 
 <style>
-  article {
-    max-width: 800px;
-    margin: 0 auto;
+  /* ===== SHARED SHOP STYLES ===== */
+  .shop-page,
+  .detail-page {
+    padding: 0 0 4rem;
   }
 
-  header {
+  .shop-topbar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 0.5rem;
+  }
+
+  .back-link {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #000;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+  }
+
+  .back-link:hover {
+    border-color: #000;
+  }
+
+  .result-count {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .shop-title {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 4.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0.5rem 0 1.5rem 0;
+    color: #000;
+    line-height: 1;
+  }
+
+  .shop-layout {
+    display: flex;
+    gap: 3rem;
+  }
+
+  .sidebar {
+    width: 160px;
+    flex-shrink: 0;
+    padding-top: 0.25rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .filter-item {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: #000;
+    text-decoration: none;
+    padding: 0.2rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    line-height: 1.6;
+  }
+
+  .filter-item:hover {
+    text-decoration: underline;
+  }
+
+  .filter-item.active {
+    font-weight: 600;
+  }
+
+  .filter-count {
+    color: #999;
+    font-weight: 400;
+  }
+
+  .product-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .product-card {
+    text-decoration: none;
+    color: #000;
+    display: block;
+  }
+
+  .product-image {
+    aspect-ratio: 1 / 1;
+    background: #efefef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder-text {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 3rem;
+    font-weight: 300;
+    color: #ccc;
+    user-select: none;
+  }
+
+  .product-card:hover .product-image {
+    opacity: 0.85;
+  }
+
+  .product-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .product-name {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #000;
+  }
+
+  .product-meta {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: #999;
+    white-space: nowrap;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    padding: 3rem 0;
+  }
+
+  .empty-state p {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* ===== PROJECT DETAIL STYLES ===== */
+  .project-detail {
+    max-width: 800px;
+    padding: 1.5rem 0 0;
+  }
+
+  .project-detail header {
     margin-bottom: 2rem;
   }
 
-  h1 {
+  .project-detail h1 {
+    font-family: 'Roboto Mono', monospace;
     font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem 0;
+    color: #000;
   }
 
   .tags {
@@ -66,10 +344,13 @@ const { Content } = await project.render();
   }
 
   .tag {
-    background: #f0f0f0;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
+    font-family: 'Roboto Mono', monospace;
+    background: #efefef;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #666;
   }
 
   .links {
@@ -78,37 +359,90 @@ const { Content } = await project.render();
   }
 
   .links a {
-    color: #0066cc;
+    font-family: 'Roboto Mono', monospace;
+    color: #000;
     text-decoration: none;
-    font-weight: 500;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid #000;
+    padding-bottom: 1px;
   }
 
   .links a:hover {
-    text-decoration: underline;
+    color: #666;
+    border-color: #666;
   }
 
   .content {
     line-height: 1.7;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
   }
 
   .content :global(h2) {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    font-size: 1.25rem;
     margin-top: 2rem;
     margin-bottom: 1rem;
   }
 
   .content :global(pre) {
     padding: 1rem;
-    border-radius: 4px;
     overflow-x: auto;
   }
 
   .content :global(code) {
-    font-family: 'Courier New', monospace;
+    font-family: 'Roboto Mono', monospace;
   }
 
   .content :global(img) {
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sidebar {
+      width: 130px;
+    }
+
+    .shop-title {
+      font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .shop-layout {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar {
+      width: 100%;
+    }
+
+    .filter-group {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.25rem 1rem;
+    }
+
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .shop-title {
+      font-size: 2.5rem;
+    }
+
+    .project-detail h1 {
+      font-size: 1.75rem;
+    }
   }
 </style>

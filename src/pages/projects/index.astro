@@ -2,102 +2,248 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const projects = await getCollection('projects');
+const categories = [
+  { name: 'Personal', slug: 'personal', count: 0 },
+  { name: 'Professional', slug: 'professional', count: 0 },
+  { name: 'Branding', slug: 'branding', count: 0 },
+  { name: 'Logo Design', slug: 'logo-design', count: 0 },
+  { name: 'Experiential Design', slug: 'experiential-design', count: 0 },
+];
 
-// Sort projects by date (newest first)
-projects.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allProjects = await getCollection('projects');
+
+// Count projects per category
+categories.forEach(cat => {
+  cat.count = allProjects.filter(p => p.data.category === cat.slug).length;
+});
+
+const totalCount = allProjects.length;
 ---
 
-<BaseLayout title="Projects - Leone Ermer">
-  <h1>Projects</h1>
+<BaseLayout title="Portfolio - Leone Ermer">
+  <div class="shop-page">
+    <div class="shop-topbar">
+      <span class="filter-toggle">+ Filter</span>
+      <span class="result-count">{totalCount} Results</span>
+    </div>
 
-  <div class="projects">
-    {projects.map((project) => (
-      <article>
-        <h2>
-          <a href={`/projects/${project.slug}`}>{project.data.title}</a>
-        </h2>
-        <p>{project.data.description}</p>
-        {project.data.tags && (
-          <div class="tags">
-            {project.data.tags.map((tag) => (
-              <span class="tag">{tag}</span>
-            ))}
-          </div>
-        )}
-        {(project.data.projectUrl || project.data.githubUrl) && (
-          <div class="links">
-            {project.data.projectUrl && (
-              <a href={project.data.projectUrl} target="_blank" rel="noopener noreferrer">View Project →</a>
-            )}
-            {project.data.githubUrl && (
-              <a href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">GitHub →</a>
-            )}
-          </div>
-        )}
-      </article>
-    ))}
+    <h1 class="shop-title">PORTFOLIO</h1>
+
+    <div class="shop-layout">
+      <aside class="sidebar">
+        <div class="filter-group">
+          <a href="/projects" class="filter-item active">
+            All <span class="filter-count">({totalCount})</span>
+          </a>
+          {categories.map((cat) => (
+            <a href={`/projects/${cat.slug}`} class="filter-item">
+              {cat.name} <span class="filter-count">({cat.count})</span>
+            </a>
+          ))}
+        </div>
+      </aside>
+
+      <div class="product-grid">
+        {categories.map((cat) => (
+          <a href={`/projects/${cat.slug}`} class="product-card">
+            <div class="product-image">
+              <span class="placeholder-text">{cat.name.charAt(0)}</span>
+            </div>
+            <div class="product-info">
+              <span class="product-name">{cat.name}</span>
+              <span class="product-price">{cat.count} {cat.count === 1 ? 'Project' : 'Projects'}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+  .shop-page {
+    padding: 0 0 4rem;
   }
 
-  .projects {
-    display: grid;
-    gap: 2rem;
-  }
-
-  article {
-    padding: 1.5rem;
-    border: 1px solid #eee;
-    border-radius: 8px;
-  }
-
-  h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
-  }
-
-  h2 a {
-    text-decoration: none;
-    color: #333;
-  }
-
-  h2 a:hover {
-    color: #0066cc;
-  }
-
-  .tags {
+  .shop-topbar {
     display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 0.5rem;
   }
 
-  .tag {
-    background: #f0f0f0;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
+  .filter-toggle {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #000;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
   }
 
-  .links {
-    margin-top: 1rem;
+  .result-count {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .shop-title {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 4.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0.25rem 0 0.75rem 0;
+    color: #000;
+    line-height: 1;
+  }
+
+  .shop-layout {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  .links a {
-    color: #0066cc;
+  .sidebar {
+    width: 140px;
+    flex-shrink: 0;
+    padding-top: 0.25rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .filter-item {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: #000;
     text-decoration: none;
-    font-weight: 500;
+    padding: 0.2rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    line-height: 1.6;
   }
 
-  .links a:hover {
+  .filter-item:hover {
     text-decoration: underline;
+  }
+
+  .filter-item.active {
+    font-weight: 600;
+  }
+
+  .filter-count {
+    color: #999;
+    font-weight: 400;
+  }
+
+  .product-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+
+  .product-card {
+    text-decoration: none;
+    color: #000;
+    display: block;
+  }
+
+  .product-image {
+    aspect-ratio: 1 / 1;
+    background: #efefef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.35rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .placeholder-text {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 3rem;
+    font-weight: 300;
+    color: #ccc;
+    user-select: none;
+  }
+
+  .product-card:hover .product-image {
+    opacity: 0.85;
+  }
+
+  .product-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .product-name {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #000;
+  }
+
+  .product-price {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: #999;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sidebar {
+      width: 130px;
+    }
+
+    .shop-title {
+      font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .shop-layout {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+    }
+
+    .filter-group {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.25rem 1rem;
+    }
+
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .shop-title {
+      font-size: 2.5rem;
+    }
   }
 </style>

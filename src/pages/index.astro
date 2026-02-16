@@ -47,6 +47,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin: 0;
     font-variation-settings: 'wdth' 50, 'GRAD' 0;
     transform: rotate(-0.48deg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  h1.ready {
+    opacity: 1;
   }
 
   .trigger {
@@ -121,6 +127,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const triggers = document.querySelectorAll('.trigger');
   const hoverImage = document.getElementById('hoverImage') as HTMLElement;
   const img = hoverImage?.querySelector('img') as HTMLImageElement;
+  const h1 = document.querySelector('h1') as HTMLElement;
+
+  // Wait for fonts to load before showing text (prevents width flicker)
+  document.fonts.ready.then(() => {
+    h1?.classList.add('ready');
+  });
 
   // Simple delay/lag with linear interpolation (no bounce)
   let targetX = 0;

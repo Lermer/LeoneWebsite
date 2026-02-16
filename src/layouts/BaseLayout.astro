@@ -70,15 +70,18 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
       const menuToggle = document.getElementById('menuToggle');
       const menuClose = document.getElementById('menuClose');
       const menuOverlay = document.getElementById('menuOverlay');
+      const header = document.querySelector('header');
 
       menuToggle?.addEventListener('click', (e) => {
         e.preventDefault();
         menuOverlay?.classList.add('active');
+        header?.classList.add('menu-active');
       });
 
       menuClose?.addEventListener('click', (e) => {
         e.preventDefault();
         menuOverlay?.classList.remove('active');
+        header?.classList.remove('menu-active');
       });
     </script>
   </body>
@@ -108,6 +111,7 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     align-items: center;
     padding-bottom: 10px;
     border-bottom: 1px solid #000;
+    transition: border-color 0.3s ease;
   }
 
   nav a {
@@ -117,6 +121,16 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     letter-spacing: -0.5625px;
     text-decoration: none;
     color: #000;
+    transition: color 0.3s ease;
+  }
+
+  /* Header styling when menu is active */
+  header.menu-active nav {
+    border-bottom-color: #FFFFFF;
+  }
+
+  header.menu-active nav a {
+    color: #FFFFFF;
   }
 
   nav a:hover {

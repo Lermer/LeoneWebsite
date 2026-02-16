@@ -9,6 +9,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
+  :global(footer) {
+    display: none;
+  }
+
   .hero {
     position: relative;
     width: 100%;
@@ -32,8 +36,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     line-height: 120%;
     color: #000000;
     margin: 0;
-    font-stretch: 50%;
-    font-variation-settings: 'GRAD' 0;
+    font-variation-settings: 'wdth' 50, 'GRAD' 0;
     transform: rotate(-0.48deg);
   }
 

@@ -119,6 +119,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const hoverImage = document.getElementById('hoverImage') as HTMLElement;
   const img = hoverImage?.querySelector('img') as HTMLImageElement;
 
+  // Smooth follow with delay/wiggle effect
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  const lerp = 0.12; // Lower = more delay/wiggle (0.1-0.2 is good)
+
+  // Track mouse position
+  document.addEventListener('mousemove', (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+  });
+
+  // Smooth animation loop
+  function animate() {
+    if (hoverImage?.classList.contains('active')) {
+      // Smoothly interpolate current position toward target
+      currentX += (targetX - currentX) * lerp;
+      currentY += (targetY - currentY) * lerp;
+
+      // Get image dimensions
+      const rect = img.getBoundingClientRect();
+
+      // Position from bottom-right corner (subtract width and height)
+      hoverImage.style.left = `${currentX - rect.width}px`;
+      hoverImage.style.top = `${currentY - rect.height}px`;
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
   triggers.forEach(trigger => {
     trigger.addEventListener('mouseenter', (e) => {
       const target = e.target as HTMLElement;
@@ -126,18 +157,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       if (imageSrc && img) {
         img.src = imageSrc;
-        hoverImage?.classList.add('active');
-      }
-    });
 
-    trigger.addEventListener('mousemove', (e) => {
-      const mouseEvent = e as MouseEvent;
-      if (hoverImage) {
-        // Offset the image slightly from the cursor
-        const offsetX = 20;
-        const offsetY = 20;
-        hoverImage.style.left = `${mouseEvent.clientX + offsetX}px`;
-        hoverImage.style.top = `${mouseEvent.clientY + offsetY}px`;
+        // Initialize position immediately to avoid jump
+        const mouseEvent = e as MouseEvent;
+        const rect = img.getBoundingClientRect();
+        currentX = mouseEvent.clientX;
+        currentY = mouseEvent.clientY;
+        hoverImage.style.left = `${currentX - rect.width}px`;
+        hoverImage.style.top = `${currentY - rect.height}px`;
+
+        hoverImage?.classList.add('active');
       }
     });
 

@@ -58,12 +58,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .trigger {
     position: relative;
     cursor: pointer;
-    transition: 0.2s opacity;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
   }
 
   @media screen and (min-width: 900px) {
     .trigger:hover {
-      opacity: 0.2;
+      opacity: 0.3;
     }
   }
 

@@ -17,7 +17,7 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&family=Roboto+Serif:opsz,wght,GRAD@8..144,100..900,-50..100&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&family=Roboto+Serif:opsz,wdth,wght,GRAD@8..144,50..100,100..900,-50..100&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
   <body>
@@ -45,12 +45,13 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
   }
 
   header {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     padding: 30px 40px;
     z-index: 10;
+    background: transparent;
   }
 
   nav {

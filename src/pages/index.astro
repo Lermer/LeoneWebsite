@@ -74,7 +74,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     left: 0;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform-origin: center center;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 9999;
     will-change: transform, opacity;
     --extraOffset: -1.125;
@@ -88,8 +89,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     width: 400px;
     height: 500px;
     object-fit: cover;
-    border-radius: 4px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      0 8px 24px rgba(0, 0, 0, 0.12),
+      0 16px 48px rgba(0, 0, 0, 0.16);
+    transform-origin: center center;
+    transition:
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hover-image.active img {
+    transform: scale(1.02);
   }
 
   @media (max-width: 900px) {
@@ -140,13 +152,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let targetY = 0;
   let currentX = 0;
   let currentY = 0;
+  let targetRotation = 0;
+  let currentRotation = 0;
 
   const lerp = 0.06; // Interpolation factor (lower = more delay)
+  const rotationLerp = 0.08; // Slightly faster for rotation
 
-  // Track mouse position
+  // Track mouse position and calculate subtle rotation
+  let lastMouseX = 0;
   document.addEventListener('mousemove', (e) => {
+    const deltaX = e.clientX - lastMouseX;
     targetX = e.clientX;
     targetY = e.clientY;
+    // Subtle rotation based on horizontal movement (-3 to 3 degrees)
+    targetRotation = Math.max(-3, Math.min(3, deltaX * 0.15));
+    lastMouseX = e.clientX;
   });
 
   // Simple lerp animation loop (no bounce, just smooth delay)
@@ -155,6 +175,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       // Smoothly interpolate toward target (no bounce)
       currentX += (targetX - currentX) * lerp;
       currentY += (targetY - currentY) * lerp;
+      currentRotation += (targetRotation - currentRotation) * rotationLerp;
 
       // Get image dimensions
       const rect = img.getBoundingClientRect();
@@ -162,7 +183,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       // Position from bottom-left corner using transform (hardware accelerated)
       const x = currentX;
       const y = currentY - rect.height;
-      hoverImage.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      hoverImage.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${currentRotation}deg)`;
+    } else {
+      // Reset rotation when not active
+      currentRotation += (0 - currentRotation) * rotationLerp;
     }
     requestAnimationFrame(animate);
   }

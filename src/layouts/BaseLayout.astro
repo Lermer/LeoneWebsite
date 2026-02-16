@@ -130,7 +130,8 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     letter-spacing: -0.5625px;
     text-decoration: none;
     color: #000;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
   }
 
   /* Header styling when menu is active */
@@ -143,7 +144,7 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
   }
 
   nav a:hover {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   .logo {
@@ -178,6 +179,12 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
 
   footer p {
     margin: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+  }
+
+  footer:hover p {
+    opacity: 0.7;
   }
 
   /* Menu Overlay */
@@ -234,10 +241,12 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     display: flex;
     align-items: center;
     gap: 1px;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
   }
 
   .menu-close:hover {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   /* Menu Items */
@@ -272,11 +281,12 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     color: #FFFFFF;
     text-decoration: none;
     font-variation-settings: 'wdth' 50, 'GRAD' 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
   }
 
   .menu-item a:hover {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   .menu-item-divider {
@@ -305,8 +315,13 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     text-decoration: none;
   }
 
+  .footer-link {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+  }
+
   .footer-link:hover {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   /* Responsive styles for menu */

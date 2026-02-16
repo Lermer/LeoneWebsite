@@ -119,12 +119,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const hoverImage = document.getElementById('hoverImage') as HTMLElement;
   const img = hoverImage?.querySelector('img') as HTMLImageElement;
 
-  // Smooth follow with delay/wiggle effect
+  // Spring physics with velocity for organic wiggle
   let targetX = 0;
   let targetY = 0;
   let currentX = 0;
   let currentY = 0;
-  const lerp = 0.12; // Lower = more delay/wiggle (0.1-0.2 is good)
+  let velocityX = 0;
+  let velocityY = 0;
+
+  const spring = 0.15; // Spring stiffness (0.1-0.3)
+  const damping = 0.75; // Velocity damping (0.6-0.9)
 
   // Track mouse position
   document.addEventListener('mousemove', (e) => {
@@ -132,18 +136,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     targetY = e.clientY;
   });
 
-  // Smooth animation loop
+  // Spring physics animation loop
   function animate() {
     if (hoverImage?.classList.contains('active')) {
-      // Smoothly interpolate current position toward target
-      currentX += (targetX - currentX) * lerp;
-      currentY += (targetY - currentY) * lerp;
+      // Calculate spring force
+      const dx = targetX - currentX;
+      const dy = targetY - currentY;
+
+      // Apply spring force to velocity
+      velocityX += dx * spring;
+      velocityY += dy * spring;
+
+      // Apply damping
+      velocityX *= damping;
+      velocityY *= damping;
+
+      // Update position with velocity
+      currentX += velocityX;
+      currentY += velocityY;
 
       // Get image dimensions
       const rect = img.getBoundingClientRect();
 
-      // Position from bottom-right corner (subtract width and height)
-      hoverImage.style.left = `${currentX - rect.width}px`;
+      // Position from bottom-left corner (only subtract height)
+      hoverImage.style.left = `${currentX}px`;
       hoverImage.style.top = `${currentY - rect.height}px`;
     }
     requestAnimationFrame(animate);
@@ -158,12 +174,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (imageSrc && img) {
         img.src = imageSrc;
 
-        // Initialize position immediately to avoid jump
+        // Initialize position and velocity to avoid jump
         const mouseEvent = e as MouseEvent;
         const rect = img.getBoundingClientRect();
         currentX = mouseEvent.clientX;
         currentY = mouseEvent.clientY;
-        hoverImage.style.left = `${currentX - rect.width}px`;
+        velocityX = 0;
+        velocityY = 0;
+        hoverImage.style.left = `${currentX}px`;
         hoverImage.style.top = `${currentY - rect.height}px`;
 
         hoverImage?.classList.add('active');

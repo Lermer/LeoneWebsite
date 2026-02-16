@@ -130,8 +130,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let velocityX = 0;
   let velocityY = 0;
 
-  const spring = 0.06; // Spring stiffness (lower = slower, more delayed)
-  const damping = 0.92; // Velocity damping (higher = less bounce, smoother)
+  const spring = 0.04; // Spring stiffness (lower = more delay/lag)
+  const damping = 0.93; // Velocity damping (higher = less bounce, smoother)
 
   // Track mouse position
   document.addEventListener('mousemove', (e) => {

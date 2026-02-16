@@ -10,6 +10,9 @@ const graphData = await buildGraphData();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Explorations - Mind Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     * {
       margin: 0;
@@ -20,7 +23,8 @@ const graphData = await buildGraphData();
     body {
       overflow: hidden;
       background-color: white;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
     }
 
     #graph-container {
@@ -44,8 +48,8 @@ const graphData = await buildGraphData();
         color: node.exists ? '#000000' : '#999999',
         font: {
           color: '#333333',
-          size: 12,
-          face: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+          size: 11,
+          face: 'Roboto Mono, monospace'
         },
         shape: 'dot',
         size: 8

@@ -4,7 +4,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Leone Ermer - Home">
   <div class="hero">
-    <h1>Leone Ermer is a Los Angeles–based creative whose work spans branding, experiential design, and art.</h1>
+    <h1>
+      <span class="trigger" data-image="https://picsum.photos/400/500?random=1">Leone Ermer</span> is a Los Angeles–based creative whose work spans <span class="trigger" data-image="https://picsum.photos/400/500?random=2">branding</span>, <span class="trigger" data-image="https://picsum.photos/400/500?random=3">experiential design</span>, and <span class="trigger" data-image="https://picsum.photos/400/500?random=4">art</span>.
+    </h1>
+    <div class="hover-image" id="hoverImage">
+      <img src="" alt="">
+    </div>
   </div>
 </BaseLayout>
 
@@ -44,11 +49,47 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transform: rotate(-0.48deg);
   }
 
+  .trigger {
+    position: relative;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .trigger:hover {
+    opacity: 0.7;
+  }
+
+  .hover-image {
+    position: fixed;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+    will-change: transform, opacity;
+  }
+
+  .hover-image.active {
+    opacity: 1;
+  }
+
+  .hover-image img {
+    width: 400px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+
   @media (max-width: 900px) {
     h1 {
       font-size: 59px;
       left: 30px;
       max-width: calc(100% - 60px);
+    }
+
+    .hover-image img {
+      width: 300px;
+      height: 375px;
     }
   }
 
@@ -63,5 +104,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       bottom: 80px;
       max-width: calc(100% - 40px);
     }
+
+    .hover-image img {
+      width: 250px;
+      height: 312px;
+    }
   }
 </style>
+
+<script>
+  const triggers = document.querySelectorAll('.trigger');
+  const hoverImage = document.getElementById('hoverImage') as HTMLElement;
+  const img = hoverImage?.querySelector('img') as HTMLImageElement;
+
+  triggers.forEach(trigger => {
+    trigger.addEventListener('mouseenter', (e) => {
+      const target = e.target as HTMLElement;
+      const imageSrc = target.dataset.image;
+
+      if (imageSrc && img) {
+        img.src = imageSrc;
+        hoverImage?.classList.add('active');
+      }
+    });
+
+    trigger.addEventListener('mousemove', (e) => {
+      const mouseEvent = e as MouseEvent;
+      if (hoverImage) {
+        // Offset the image slightly from the cursor
+        const offsetX = 20;
+        const offsetY = 20;
+        hoverImage.style.left = `${mouseEvent.clientX + offsetX}px`;
+        hoverImage.style.top = `${mouseEvent.clientY + offsetY}px`;
+      }
+    });
+
+    trigger.addEventListener('mouseleave', () => {
+      hoverImage?.classList.remove('active');
+    });
+  });
+</script>

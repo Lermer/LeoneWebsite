@@ -72,16 +72,25 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
       const menuOverlay = document.getElementById('menuOverlay');
       const header = document.querySelector('header');
 
+      function toggleMenu() {
+        const isActive = menuOverlay?.classList.contains('active');
+        if (isActive) {
+          menuOverlay?.classList.remove('active');
+          header?.classList.remove('menu-active');
+        } else {
+          menuOverlay?.classList.add('active');
+          header?.classList.add('menu-active');
+        }
+      }
+
       menuToggle?.addEventListener('click', (e) => {
         e.preventDefault();
-        menuOverlay?.classList.add('active');
-        header?.classList.add('menu-active');
+        toggleMenu();
       });
 
       menuClose?.addEventListener('click', (e) => {
         e.preventDefault();
-        menuOverlay?.classList.remove('active');
-        header?.classList.remove('menu-active');
+        toggleMenu();
       });
     </script>
   </body>

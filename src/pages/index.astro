@@ -122,16 +122,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const hoverImage = document.getElementById('hoverImage') as HTMLElement;
   const img = hoverImage?.querySelector('img') as HTMLImageElement;
 
-  // Spring physics with velocity for organic wiggle
+  // Simple delay/lag with linear interpolation (no bounce)
   let targetX = 0;
   let targetY = 0;
   let currentX = 0;
   let currentY = 0;
-  let velocityX = 0;
-  let velocityY = 0;
 
-  const spring = 0.04; // Spring stiffness (lower = more delay/lag)
-  const damping = 0.93; // Velocity damping (higher = less bounce, smoother)
+  const lerp = 0.1; // Interpolation factor (lower = more delay)
 
   // Track mouse position
   document.addEventListener('mousemove', (e) => {
@@ -139,24 +136,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     targetY = e.clientY;
   });
 
-  // Spring physics animation loop with transform for better performance
+  // Simple lerp animation loop (no bounce, just smooth delay)
   function animate() {
     if (hoverImage?.classList.contains('active')) {
-      // Calculate spring force
-      const dx = targetX - currentX;
-      const dy = targetY - currentY;
-
-      // Apply spring force to velocity
-      velocityX += dx * spring;
-      velocityY += dy * spring;
-
-      // Apply damping
-      velocityX *= damping;
-      velocityY *= damping;
-
-      // Update position with velocity
-      currentX += velocityX;
-      currentY += velocityY;
+      // Smoothly interpolate toward target (no bounce)
+      currentX += (targetX - currentX) * lerp;
+      currentY += (targetY - currentY) * lerp;
 
       // Get image dimensions
       const rect = img.getBoundingClientRect();
@@ -178,13 +163,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (imageSrc && img) {
         img.src = imageSrc;
 
-        // Initialize position and velocity to avoid jump
+        // Initialize position to avoid jump
         const mouseEvent = e as MouseEvent;
         const rect = img.getBoundingClientRect();
         currentX = mouseEvent.clientX;
         currentY = mouseEvent.clientY;
-        velocityX = 0;
-        velocityY = 0;
 
         const x = currentX;
         const y = currentY - rect.height;

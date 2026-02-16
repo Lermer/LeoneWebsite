@@ -3,27 +3,47 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Leone Ermer - Home">
-  <h1>Welcome to Leone Ermer's Website</h1>
-  <p>This is your homepage. Start editing to make it your own!</p>
-
-  <section>
-    <h2>About</h2>
-    <p>Add your introduction here.</p>
-  </section>
+  <div class="hero">
+    <h1>Leone Ermer is a Los Angeles–based creative whose work spans branding, experiential design, and art.</h1>
+  </div>
 </BaseLayout>
 
 <style>
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 200px);
+    background: linear-gradient(0deg, #FFFFFF 0%, #0048FF 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 40px;
+  }
+
   h1 {
-    font-size: 44px;
-    margin-bottom: 1rem;
+    font-family: 'Roboto Serif', serif;
+    font-style: normal;
+    font-weight: 368;
+    font-size: 78px;
+    line-height: 120%;
+    color: #000000;
+    margin: 0;
+    max-width: 1080px;
+    font-variation-settings: 'GRAD' 0;
   }
 
-  section {
-    margin-top: 3rem;
+  @media (max-width: 900px) {
+    h1 {
+      font-size: 59px;
+    }
   }
 
-  h2 {
-    font-size: 33px;
-    margin-bottom: 1rem;
+  @media (max-width: 640px) {
+    .hero {
+      padding: 30px 20px;
+    }
+
+    h1 {
+      font-size: 44px;
+    }
   }
 </style>

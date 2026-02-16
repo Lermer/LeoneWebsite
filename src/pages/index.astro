@@ -12,14 +12,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .hero {
     position: relative;
     width: 100%;
-    min-height: calc(100vh - 200px);
+    min-height: 100vh;
     background: linear-gradient(0deg, #FFFFFF 0%, #0048FF 100%);
     display: flex;
     align-items: flex-end;
-    padding: 40px;
+    padding: 40px 40px 100px 40px;
   }
 
   h1 {
+    position: absolute;
+    left: 36.4px;
+    bottom: 100px;
+    width: 1080px;
+    max-width: calc(100% - 80px);
     font-family: 'Roboto Serif', serif;
     font-style: normal;
     font-weight: 368;
@@ -27,23 +32,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     line-height: 120%;
     color: #000000;
     margin: 0;
-    max-width: 1080px;
+    font-stretch: 50%;
     font-variation-settings: 'GRAD' 0;
+    transform: rotate(-0.48deg);
   }
 
   @media (max-width: 900px) {
     h1 {
       font-size: 59px;
+      left: 30px;
+      max-width: calc(100% - 60px);
     }
   }
 
   @media (max-width: 640px) {
     .hero {
-      padding: 30px 20px;
+      padding: 30px 20px 80px 20px;
     }
 
     h1 {
       font-size: 44px;
+      left: 20px;
+      bottom: 80px;
+      max-width: calc(100% - 40px);
     }
   }
 </style>

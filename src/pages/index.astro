@@ -5,7 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Leone Ermer - Home">
   <div class="hero">
     <h1>
-      <span class="trigger" data-image="https://picsum.photos/400/500?random=1">Leone Ermer</span> is a Los Angeles–based creative whose work spans <span class="trigger" data-image="https://picsum.photos/400/500?random=2">branding</span>, <span class="trigger" data-image="https://picsum.photos/400/500?random=3">experiential design</span>, and <span class="trigger" data-image="https://picsum.photos/400/500?random=4">art</span>.
+      <span class="trigger" data-image="https://picsum.photos/400/500?random=1">Leone Ermer</span><wbr> is a Los Angeles–based<wbr> creative whose work spans <span class="trigger" data-image="https://picsum.photos/400/500?random=2">branding</span>,<wbr> <span class="trigger" data-image="https://picsum.photos/400/500?random=3">experiential design</span>,<wbr> and <span class="trigger" data-image="https://picsum.photos/400/500?random=4">art</span>.
     </h1>
     <div class="hover-image" id="hoverImage">
       <img src="" alt="">
@@ -30,14 +30,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     height: 100vh;
     background: linear-gradient(0deg, #FFFFFF 22.12%, #7EC3FF 56.25%, #0048FF 100%);
     overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    column-gap: 20px;
+    padding: 0 40px;
   }
 
   h1 {
     position: fixed;
-    left: 36.4px;
+    left: 40px;
     bottom: 100px;
-    width: 1080px;
-    max-width: calc(100% - 80px);
+    grid-column: 1 / 6;
+    width: calc((100vw - 80px - 140px) * 5 / 8 + 80px);
     font-family: 'new-spirit', serif;
     font-style: normal;
     font-weight: 700;
@@ -109,10 +113,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   @media (max-width: 900px) {
+    .hero {
+      padding: 0 30px;
+      column-gap: 15px;
+    }
+
     h1 {
       font-size: 59px;
       left: 30px;
-      max-width: calc(100% - 60px);
+      width: calc((100vw - 60px - 105px) * 6 / 8 + 75px);
+      grid-column: 1 / 7;
     }
 
     .hover-image img {
@@ -124,13 +134,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   @media (max-width: 640px) {
     .hero {
       padding: 30px 20px 80px 20px;
+      column-gap: 10px;
     }
 
     h1 {
       font-size: 44px;
       left: 20px;
       bottom: 80px;
-      max-width: calc(100% - 40px);
+      width: calc(100vw - 40px);
+      grid-column: 1 / 9;
     }
 
     .hover-image img {

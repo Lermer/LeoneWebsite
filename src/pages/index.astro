@@ -3,6 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Leone Ermer - Home">
+  <svg style="position:absolute;width:0;height:0;">
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+    </filter>
+  </svg>
   <div class="hero">
     <h1>
       <span class="trigger" data-image="https://picsum.photos/400/500?random=1">Leone Ermer</span><wbr> is a Los&nbsp;Angeles–based<wbr> creative whose work spans <span class="trigger" data-image="https://picsum.photos/400/500?random=3">experiential design</span>,<wbr> <span class="trigger" data-image="https://picsum.photos/400/500?random=2">branding</span>,<wbr> and&nbsp;<span class="trigger" data-image="https://picsum.photos/400/500?random=4">art</span>.
@@ -22,13 +27,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: none;
   }
 
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    filter: url(#noise);
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 1;
+  }
+
   .hero {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(0deg, #FFFFFF 0%, #7ED4FF 14.9%, #0048FF 69.33%);
+    background: linear-gradient(
+      0deg,
+      #FFFFFF 0%,
+      #F0F8FF 4%,
+      #D4EEFF 7.5%,
+      #B0E0FF 10%,
+      #7ED4FF 14.9%,
+      #5EC5FF 22%,
+      #3FB5FF 30%,
+      #2A9BFF 38%,
+      #1A82FF 46%,
+      #0D6AFF 54%,
+      #0058FF 62%,
+      #0048FF 69.33%,
+      #0040EE 80%,
+      #003ADE 100%
+    );
     background-size: 100% 150vh;
     background-position: 0% 0%;
     overflow: hidden;

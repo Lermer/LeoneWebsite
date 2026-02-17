@@ -14,12 +14,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
-  @property --gradient-start {
-    syntax: '<percentage>';
-    inherits: false;
-    initial-value: 100%;
-  }
-
   :global(body) {
     overflow: hidden;
   }
@@ -34,22 +28,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     left: 0;
     width: 100vw;
     height: 100vh;
-    --gradient-start: 100%;
-    background: linear-gradient(0deg, #FFFFFF var(--gradient-start), #7EC3FF 56.25%, #0048FF 100%);
+    background: linear-gradient(0deg, #FFFFFF 22.12%, #7EC3FF 56.25%, #0048FF 100%);
     overflow: hidden;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     column-gap: 20px;
     padding: 0 40px;
-    animation: sunrise 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    animation: fadeIn 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  @keyframes sunrise {
+  @keyframes fadeIn {
     from {
-      --gradient-start: 100%;
+      opacity: 0;
     }
     to {
-      --gradient-start: 22.12%;
+      opacity: 1;
     }
   }
 

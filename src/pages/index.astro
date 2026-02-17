@@ -202,9 +202,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const img = hoverImage?.querySelector('img') as HTMLImageElement;
   const h1 = document.querySelector('h1') as HTMLElement;
 
-  // Wait for fonts to load before showing text (prevents width flicker)
+  // Wait for fonts to load + ensure the browser has painted opacity:0 first
   document.fonts.ready.then(() => {
-    h1?.classList.add('ready');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        h1?.classList.add('ready');
+      });
+    });
   });
 
   // Simple delay/lag with linear interpolation (no bounce)

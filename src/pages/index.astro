@@ -28,23 +28,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(0deg, #FFFFFF 0%, #7ED4FF 14.9%, #0048FF 43.27%, #0048FF 100%);
-    background-size: 100% 140vh;
-    background-position: 0% 30%;
+    background: linear-gradient(0deg, #FFFFFF 22.12%, #7ED4FF 56.25%, #0048FF 100%);
+    background-size: 100% 150vh;
+    background-position: 0% 20%;
     overflow: hidden;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     column-gap: 20px;
     padding: 0 40px;
-    animation: sunrise 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: sunrise 2.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
   }
 
   @keyframes sunrise {
     from {
-      background-position: 0% 30%;
+      background-position: 0% 20%;
     }
     to {
-      background-position: 0% 70%;
+      background-position: 0% 0%;
     }
   }
 

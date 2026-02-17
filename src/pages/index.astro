@@ -29,11 +29,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     width: 100vw;
     height: 100vh;
     background: linear-gradient(0deg, #FFFFFF 22.12%, #7EC3FF 56.25%, #0048FF 100%);
+    background-size: 100% 200%;
+    background-position: 0% 100%;
     overflow: hidden;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     column-gap: 20px;
     padding: 0 40px;
+    animation: sunrise 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes sunrise {
+    from {
+      background-position: 0% 100%;
+    }
+    to {
+      background-position: 0% 50%;
+    }
   }
 
   h1 {

@@ -47,13 +47,12 @@ const { Content } = await post.render();
   }
 
   h1 {
-    font-size: 44px;
     margin-bottom: 0.5rem;
+    font-size: 44px;
   }
 
   .date {
-    color: #666;
-    font-size: 14px;
+    color: #999;
     margin: 0 0 1rem 0;
   }
 
@@ -64,34 +63,32 @@ const { Content } = await post.render();
   }
 
   .tag {
-    background: #f0f0f0;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 14px;
+    background: #efefef;
+    padding: 0.2rem 0.6rem;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #666;
   }
 
   .content {
-    line-height: 1.7;
+    line-height: 170%;
   }
 
   .content :global(h2) {
+    font-weight: 600;
+    font-size: 19px;
     margin-top: 2rem;
     margin-bottom: 1rem;
   }
 
   .content :global(pre) {
     padding: 1rem;
-    border-radius: 4px;
     overflow-x: auto;
-  }
-
-  .content :global(code) {
-    font-family: 'Courier New', monospace;
   }
 
   .content :global(img) {
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
   }
 </style>

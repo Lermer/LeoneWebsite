@@ -1,177 +1,115 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { buildGraphData } from '../../utils/graphData';
 
 const graphData = await buildGraphData();
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorations - Mind Map</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      overflow: hidden;
-      background-color: white;
-      font-family: 'Roboto Mono', monospace;
-      font-size: 14px;
-    }
-
-    #graph-container {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-</head>
-<body>
+<BaseLayout title="Explorations - Mind Map" hideFooter>
   <div id="graph-container"></div>
+</BaseLayout>
 
-  <script type="module" define:vars={{ graphData }} is:inline>
-    console.log('Graph data:', graphData);
+<style>
+  :global(body) {
+    overflow: hidden;
+  }
 
-    // Transform data for vis.js
-    const nodes = new vis.DataSet(
-      graphData.nodes.map(node => ({
-        id: node.id,
-        label: node.label,
-        color: node.exists ? '#000000' : '#999999',
-        font: {
-          color: '#333333',
-          size: 11,
-          face: 'Roboto Mono, monospace'
-        },
-        shape: 'dot',
-        size: 8
-      }))
-    );
+  #graph-container {
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
 
-    const edges = new vis.DataSet(
-      graphData.links.map((link, index) => ({
-        id: index,
-        from: link.source,
-        to: link.target,
-        color: {
-          color: '#999999',
-          opacity: 0.6
-        },
-        width: 1.5,
-        smooth: {
-          type: 'continuous'
-        }
-      }))
-    );
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js" is:inline></script>
 
-    // Create network
-    const container = document.getElementById('graph-container');
-    const data = { nodes, edges };
+<script type="module" define:vars={{ graphData }} is:inline>
+  console.log('Graph data:', graphData);
 
-    const options = {
-      physics: {
-        enabled: true,
-        forceAtlas2Based: {
-          gravitationalConstant: -50,
-          centralGravity: 0.01,
-          springLength: 150,
-          springConstant: 0.08,
-          damping: 0.4,
-          avoidOverlap: 0.5
-        },
-        maxVelocity: 50,
-        solver: 'forceAtlas2Based',
-        timestep: 0.35,
-        stabilization: {
-          enabled: true,
-          iterations: 1000,
-          updateInterval: 25
-        }
+  // Transform data for vis.js
+  const nodes = new vis.DataSet(
+    graphData.nodes.map(node => ({
+      id: node.id,
+      label: node.label,
+      color: node.exists ? '#000000' : '#999999',
+      font: {
+        color: '#333333',
+        size: 11,
+        face: 'Roboto Mono, monospace'
       },
-      interaction: {
-        dragNodes: true,
-        dragView: true,
-        zoomView: true,
-        hover: true,
-        navigationButtons: false,
-        keyboard: false
+      shape: 'dot',
+      size: 8
+    }))
+  );
+
+  const edges = new vis.DataSet(
+    graphData.links.map((link, index) => ({
+      id: index,
+      from: link.source,
+      to: link.target,
+      color: {
+        color: '#999999',
+        opacity: 0.6
       },
-      nodes: {
-        borderWidth: 0,
-        borderWidthSelected: 0
-      },
-      edges: {
-        selectionWidth: 0
+      width: 1.5,
+      smooth: {
+        type: 'continuous'
       }
-    };
+    }))
+  );
 
-    const network = new vis.Network(container, data, options);
+  // Create network
+  const container = document.getElementById('graph-container');
+  const data = { nodes, edges };
 
-    // Track selected node
-    let selectedNode = null;
+  const options = {
+    physics: {
+      enabled: true,
+      forceAtlas2Based: {
+        gravitationalConstant: -50,
+        centralGravity: 0.01,
+        springLength: 150,
+        springConstant: 0.08,
+        damping: 0.4,
+        avoidOverlap: 0.5
+      },
+      maxVelocity: 50,
+      solver: 'forceAtlas2Based',
+      timestep: 0.35,
+      stabilization: {
+        enabled: true,
+        iterations: 1000,
+        updateInterval: 25
+      }
+    },
+    interaction: {
+      dragNodes: true,
+      dragView: true,
+      zoomView: true,
+      hover: true,
+      navigationButtons: false,
+      keyboard: false
+    },
+    nodes: {
+      borderWidth: 0,
+      borderWidthSelected: 0
+    },
+    edges: {
+      selectionWidth: 0
+    }
+  };
 
-    // Click handler
-    network.on('click', function(params) {
-      if (params.nodes.length > 0) {
-        const nodeId = params.nodes[0];
+  const network = new vis.Network(container, data, options);
 
-        if (selectedNode === nodeId) {
-          // Deselect
-          selectedNode = null;
+  // Track selected node
+  let selectedNode = null;
 
-          // Reset all nodes
-          graphData.nodes.forEach(n => {
-            nodes.update({
-              id: n.id,
-              color: n.exists ? '#000000' : '#999999'
-            });
-          });
+  // Click handler
+  network.on('click', function(params) {
+    if (params.nodes.length > 0) {
+      const nodeId = params.nodes[0];
 
-          // Reset all edges
-          edges.forEach(e => {
-            edges.update({
-              id: e.id,
-              color: {
-                color: '#999999',
-                opacity: 0.6
-              }
-            });
-          });
-        } else {
-          // Select node
-          selectedNode = nodeId;
-
-          // Update nodes
-          graphData.nodes.forEach(n => {
-            nodes.update({
-              id: n.id,
-              color: n.id === nodeId ? '#4169E1' : (n.exists ? '#000000' : '#999999')
-            });
-          });
-
-          // Update edges
-          const connectedEdges = network.getConnectedEdges(nodeId);
-          edges.forEach(e => {
-            const isConnected = connectedEdges.includes(String(e.id));
-            edges.update({
-              id: e.id,
-              color: {
-                color: isConnected ? '#4169E1' : '#999999',
-                opacity: isConnected ? 1 : 0.6
-              }
-            });
-          });
-        }
-      } else {
-        // Clicked on canvas - deselect all
+      if (selectedNode === nodeId) {
+        // Deselect
         selectedNode = null;
 
         // Reset all nodes
@@ -192,13 +130,58 @@ const graphData = await buildGraphData();
             }
           });
         });
-      }
-    });
+      } else {
+        // Select node
+        selectedNode = nodeId;
 
-    // Handle window resize
-    window.addEventListener('resize', () => {
-      network.fit();
-    });
-  </script>
-</body>
-</html>
+        // Update nodes
+        graphData.nodes.forEach(n => {
+          nodes.update({
+            id: n.id,
+            color: n.id === nodeId ? '#4169E1' : (n.exists ? '#000000' : '#999999')
+          });
+        });
+
+        // Update edges
+        const connectedEdges = network.getConnectedEdges(nodeId);
+        edges.forEach(e => {
+          const isConnected = connectedEdges.includes(String(e.id));
+          edges.update({
+            id: e.id,
+            color: {
+              color: isConnected ? '#4169E1' : '#999999',
+              opacity: isConnected ? 1 : 0.6
+            }
+          });
+        });
+      }
+    } else {
+      // Clicked on canvas - deselect all
+      selectedNode = null;
+
+      // Reset all nodes
+      graphData.nodes.forEach(n => {
+        nodes.update({
+          id: n.id,
+          color: n.exists ? '#000000' : '#999999'
+        });
+      });
+
+      // Reset all edges
+      edges.forEach(e => {
+        edges.update({
+          id: e.id,
+          color: {
+            color: '#999999',
+            opacity: 0.6
+          }
+        });
+      });
+    }
+  });
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    network.fit();
+  });
+</script>

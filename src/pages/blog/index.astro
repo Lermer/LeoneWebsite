@@ -35,7 +35,6 @@ blogPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 <style>
   h1 {
-    font-size: 44px;
     margin-bottom: 2rem;
   }
 
@@ -45,28 +44,26 @@ blogPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   }
 
   article {
-    padding: 1.5rem;
-    border: 1px solid #eee;
-    border-radius: 8px;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #000;
   }
 
   h2 {
     margin: 0 0 0.5rem 0;
-    font-size: 25px;
+    font-size: 18px;
+    font-weight: 500;
   }
 
   h2 a {
-    text-decoration: none;
-    color: #333;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   h2 a:hover {
-    color: #0066cc;
+    opacity: 0.6;
   }
 
   .date {
-    color: #666;
-    font-size: 14px;
+    color: #999;
     margin: 0 0 1rem 0;
   }
 
@@ -78,9 +75,11 @@ blogPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   }
 
   .tag {
-    background: #f0f0f0;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 14px;
+    background: #efefef;
+    padding: 0.2rem 0.6rem;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #666;
   }
 </style>

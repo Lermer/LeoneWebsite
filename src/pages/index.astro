@@ -3,9 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Leone Ermer - Home">
+  <svg style="position:absolute;width:0;height:0;">
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+    </filter>
+  </svg>
   <div class="hero">
     <h1>
-      <span class="trigger" data-image="https://picsum.photos/400/500?random=1">Leone Ermer</span> is a Los Angeles–based creative whose work spans <span class="trigger" data-image="https://picsum.photos/400/500?random=2">branding</span>, <span class="trigger" data-image="https://picsum.photos/400/500?random=3">experiential design</span>, and <span class="trigger" data-image="https://picsum.photos/400/500?random=4">art</span>.
+      <span class="trigger" data-image="https://picsum.photos/400/500?random=1">Leone Ermer</span><wbr> is a creative working across<wbr> <span class="trigger" data-image="https://picsum.photos/400/500?random=3">experiential design</span>,<wbr> <span class="trigger" data-image="https://picsum.photos/400/500?random=2">branding</span>,<wbr> and&nbsp;<span class="trigger" data-image="https://picsum.photos/400/500?random=4">art</span>,<wbr> based in Los&nbsp;Angeles.
     </h1>
     <div class="hover-image" id="hoverImage">
       <img src="" alt="">
@@ -22,33 +27,74 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: none;
   }
 
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    filter: url(#noise);
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 1;
+  }
+
   .hero {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(0deg, #FFFFFF 0%, #0048FF 100%);
+    background: linear-gradient(
+      0deg,
+      #FFFFFF 0%,
+      #F0F8FF 4%,
+      #D4EEFF 7.5%,
+      #B0E0FF 10%,
+      #7ED4FF 14.9%,
+      #5EC5FF 22%,
+      #3FB5FF 30%,
+      #2A9BFF 38%,
+      #1A82FF 46%,
+      #0D6AFF 54%,
+      #0058FF 62%,
+      #0048FF 69.33%,
+      #0040EE 80%,
+      #003ADE 100%
+    );
+    background-size: 100% 150vh;
+    background-position: 0% 0%;
     overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    column-gap: 20px;
+    padding: 0 40px;
+    animation: sunrise 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes sunrise {
+    from {
+      background-position: 0% 0%;
+    }
+    to {
+      background-position: 0% 100%;
+    }
   }
 
   h1 {
     position: fixed;
-    left: 36.4px;
-    bottom: 100px;
-    width: 1080px;
-    max-width: calc(100% - 80px);
-    font-family: 'Roboto Serif', serif;
+    left: 40px;
+    bottom: 20px;
+    grid-column: 1 / 6;
+    width: calc((100vw - 80px - 140px) * 5 / 8 + 80px);
+    font-family: 'new-spirit-condensed', serif;
     font-style: normal;
-    font-weight: 368;
+    font-weight: 700;
     font-size: 78px;
     line-height: 120%;
     color: #000000;
     margin: 0;
-    font-variation-settings: 'wdth' 50, 'GRAD' 0;
     transform: rotate(-0.48deg);
     opacity: 0;
-    transition: opacity 0.3s ease;
   }
 
   h1.ready {
@@ -109,10 +155,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   @media (max-width: 900px) {
+    .hero {
+      padding: 0 30px;
+      column-gap: 15px;
+    }
+
     h1 {
       font-size: 59px;
       left: 30px;
-      max-width: calc(100% - 60px);
+      width: calc((100vw - 60px - 105px) * 5 / 8 + 60px);
+      grid-column: 1 / 6;
     }
 
     .hover-image img {
@@ -124,13 +176,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   @media (max-width: 640px) {
     .hero {
       padding: 30px 20px 80px 20px;
+      column-gap: 10px;
     }
 
     h1 {
       font-size: 44px;
       left: 20px;
-      bottom: 80px;
-      max-width: calc(100% - 40px);
+      bottom: 20px;
+      width: calc((100vw - 40px - 70px) * 7 / 8 + 60px);
+      grid-column: 1 / 8;
     }
 
     .hover-image img {
@@ -146,9 +200,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const img = hoverImage?.querySelector('img') as HTMLImageElement;
   const h1 = document.querySelector('h1') as HTMLElement;
 
-  // Wait for fonts to load before showing text (prevents width flicker)
+  // Wait for fonts to load + ensure the browser has painted opacity:0 first
   document.fonts.ready.then(() => {
-    h1?.classList.add('ready');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        h1?.classList.add('ready');
+      });
+    });
   });
 
   // Simple delay/lag with linear interpolation (no bounce)

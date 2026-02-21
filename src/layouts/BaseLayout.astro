@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { title, description = 'Leone Ermer Website', pageName, hideFooter = false } = Astro.props;
+import '../styles/global.css';
 ---
 
 <!doctype html>
@@ -19,7 +20,7 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
     <meta name="generator" content={Astro.generator} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.typekit.net/vcu6pxy.css" />
     <title>{title}</title>
   </head>
@@ -104,12 +105,7 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
 </html>
 
 <style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto Mono', monospace;
-    font-size: 14px;
-  }
+  /* Body overrides handled by global.css via import */
 
   header {
     position: fixed;
@@ -132,12 +128,6 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
   }
 
   nav a {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 14px;
-    line-height: 28px;
-    letter-spacing: -0.5625px;
-    text-decoration: none;
-    color: #000;
     transition: color 0.3s ease, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity;
   }
@@ -165,10 +155,6 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
     font-family: 'new-spirit-condensed', serif;
     font-style: italic;
     font-weight: 500;
-    font-size: 14px;
-    line-height: 28px;
-    letter-spacing: -0.5625px;
-    color: #000;
     transition: color 0.3s ease;
   }
 
@@ -201,15 +187,9 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
     align-items: center;
     padding: 30px 40px;
     border-top: 1px solid #000;
-    font-family: 'Roboto Mono', monospace;
-    font-size: 14px;
-    color: #000;
-    letter-spacing: -0.5625px;
   }
 
   .footer-contact-link {
-    text-decoration: none;
-    color: #000;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity;
   }
@@ -269,11 +249,6 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
 
   .menu-logo,
   .menu-close {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 14px;
-    line-height: 28px;
-    letter-spacing: -0.5625px;
-    text-decoration: none;
     color: #FFFFFF;
   }
 
@@ -312,14 +287,12 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
   .menu-item a {
     font-family: 'new-spirit-condensed', serif;
     font-style: normal;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 64px;
-    line-height: 64px;
+    line-height: 120%;
     display: flex;
     align-items: flex-end;
-    letter-spacing: -0.5625px;
     color: #FFFFFF;
-    text-decoration: none;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity;
   }
@@ -346,12 +319,8 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
 
   .footer-link,
   .footer-copyright {
-    font-family: 'Roboto Mono', monospace;
     font-size: 13px;
-    line-height: 28px;
-    letter-spacing: -0.5625px;
     color: #FFFFFF;
-    text-decoration: none;
   }
 
   .footer-link {
@@ -367,7 +336,7 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
   @media (max-width: 900px) {
     .menu-item a {
       font-size: 48px;
-      line-height: 48px;
+      line-height: 120%;
     }
 
     .menu-item {
@@ -393,7 +362,7 @@ const { title, description = 'Leone Ermer Website', pageName, hideFooter = false
 
     .menu-item a {
       font-size: 36px;
-      line-height: 36px;
+      line-height: 120%;
     }
 
     .menu-footer {

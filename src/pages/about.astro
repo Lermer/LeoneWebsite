@@ -21,7 +21,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <li>Something that goes to space?</li>
         </ol>
         <p class="cta-text">Want to make one of these with me? Or have something else in mind?</p>
-        <a href="/contact" class="lets-talk">Let's talk.</a>
+        <p><a href="/contact" class="lets-talk">Let's talk.</a></p>
       </div>
       <div class="about-image">
         <img src="/images/Leone.png" alt="Leone Ermer" />
@@ -64,9 +64,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .lets-talk {
-    font-style: italic;
-    text-decoration: underline;
-    text-underline-offset: 3px;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity;
   }

@@ -1,7 +1,7 @@
 /* ==========================================================================
    Global Styles — Leone Ermer
    Master stylesheet: base typography, resets, and shared design tokens.
-   Individual pages/components may override these where needed.
+   Individual pages/components handle their own layout and interaction styles.
    ========================================================================== */
 
 /* ---------- Reset ---------- */
@@ -41,8 +41,72 @@ a {
   text-decoration: none;
 }
 
+/* Body-copy links (scoped to paragraphs so nav/menu links are unaffected) */
+p a {
+  font-style: italic;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+p a:hover {
+  font-family: 'new-spirit-condensed', serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
 /* ---------- Images ---------- */
 img {
   max-width: 100%;
   display: block;
+}
+
+/* ---------- Nav ---------- */
+.logo {
+  font-weight: 400;
+}
+
+.page-name {
+  font-family: 'new-spirit-condensed', serif;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.arrow {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ---------- Menu Overlay ---------- */
+.menu-logo,
+.menu-close {
+  color: #FFFFFF;
+}
+
+.menu-item a {
+  font-family: 'new-spirit-condensed', serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 64px;
+  line-height: 120%;
+  color: #FFFFFF;
+}
+
+.footer-link,
+.footer-copyright {
+  font-size: 13px;
+  color: #FFFFFF;
+}
+
+/* ---------- Responsive Typography ---------- */
+@media (max-width: 900px) {
+  .menu-item a {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 640px) {
+  .menu-item a {
+    font-size: 36px;
+  }
 }

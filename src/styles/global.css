@@ -49,7 +49,7 @@ p a {
 }
 
 p a:hover {
-  font-family: 'new-spirit-condensed', serif;
+  font-family: 'new-spirit', serif;
   font-style: italic;
   font-weight: 500;
   letter-spacing: .1em;

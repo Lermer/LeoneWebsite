@@ -41,6 +41,19 @@ a {
   text-decoration: none;
 }
 
+/* Body-copy links (scoped to paragraphs so nav/menu links are unaffected) */
+p a {
+  font-style: italic;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+p a:hover {
+  font-family: 'new-spirit-condensed', serif;
+  font-style: italic;
+  font-weight: 500;
+}
+
 /* ---------- Images ---------- */
 img {
   max-width: 100%;

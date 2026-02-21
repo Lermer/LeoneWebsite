@@ -3,9 +3,10 @@ interface Props {
   title: string;
   description?: string;
   pageName?: string;
+  hideFooter?: boolean;
 }
 
-const { title, description = 'Leone Ermer Website', pageName } = Astro.props;
+const { title, description = 'Leone Ermer Website', pageName, hideFooter = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -65,10 +66,12 @@ const { title, description = 'Leone Ermer Website', pageName } = Astro.props;
     <main>
       <slot />
     </main>
-    <footer>
-      <a href="/contact" class="footer-contact-link">CONTACT</a>
-      <span class="footer-copy">&copy;{new Date().getFullYear()} LEONE ERMER</span>
-    </footer>
+    {!hideFooter && (
+      <footer>
+        <a href="/contact" class="footer-contact-link">CONTACT</a>
+        <span class="footer-copy">&copy;{new Date().getFullYear()} LEONE ERMER</span>
+      </footer>
+    )}
 
     <script>
       const menuToggle = document.getElementById('menuToggle');
@@ -307,10 +310,9 @@ const { title, description = 'Leone Ermer Website', pageName } = Astro.props;
   }
 
   .menu-item a {
-    font-family: 'new-spirit', serif;
+    font-family: 'new-spirit-condensed', serif;
     font-style: normal;
-    font-weight: 700;
-    font-stretch: condensed;
+    font-weight: 600;
     font-size: 64px;
     line-height: 64px;
     display: flex;

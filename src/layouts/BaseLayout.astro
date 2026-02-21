@@ -2,9 +2,11 @@
 interface Props {
   title: string;
   description?: string;
+  pageName?: string;
+  hideFooter?: boolean;
 }
 
-const { title, description = 'Leone Ermer Website' } = Astro.props;
+const { title, description = 'Leone Ermer Website', pageName, hideFooter = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,6 +27,7 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     <header>
       <nav>
         <a href="/" class="logo">LEONE ERMER</a>
+        {pageName && <span class="page-name">{pageName}</span>}
         <a href="#" class="menu" id="menuToggle">MENU<span class="arrow">↗</span></a>
       </nav>
     </header>
@@ -63,9 +66,12 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
     <main>
       <slot />
     </main>
-    <footer>
-      <p>&copy; {new Date().getFullYear()} Leone Ermer</p>
-    </footer>
+    {!hideFooter && (
+      <footer>
+        <a href="/contact" class="footer-contact-link">CONTACT</a>
+        <span class="footer-copy">&copy;{new Date().getFullYear()} LEONE ERMER</span>
+      </footer>
+    )}
 
     <script>
       const menuToggle = document.getElementById('menuToggle');
@@ -116,8 +122,9 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
   }
 
   nav {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    column-gap: 20px;
     align-items: center;
     padding-bottom: 10px;
     border-bottom: 1px solid #000;
@@ -149,10 +156,29 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
   }
 
   .logo {
+    grid-column: 1 / 3;
     font-weight: 400;
   }
 
+  .page-name {
+    grid-column: 3;
+    font-family: 'new-spirit-condensed', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 28px;
+    letter-spacing: -0.5625px;
+    color: #000;
+    transition: color 0.3s ease;
+  }
+
+  header.menu-active .page-name {
+    color: #FFFFFF;
+  }
+
   .menu {
+    grid-column: 8;
+    justify-self: end;
     display: flex;
     align-items: center;
     gap: 1px;
@@ -170,21 +196,34 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
   }
 
   footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 30px 40px;
-    text-align: center;
     border-top: 1px solid #000;
     font-family: 'Roboto Mono', monospace;
     font-size: 14px;
     color: #000;
+    letter-spacing: -0.5625px;
   }
 
-  footer p {
-    margin: 0;
+  .footer-contact-link {
+    text-decoration: none;
+    color: #000;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity;
   }
 
-  footer:hover p {
+  .footer-contact-link:hover {
+    opacity: 0.6;
+  }
+
+  .footer-copy {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+  }
+
+  .footer-copy:hover {
     opacity: 0.7;
   }
 
@@ -271,10 +310,9 @@ const { title, description = 'Leone Ermer Website' } = Astro.props;
   }
 
   .menu-item a {
-    font-family: 'new-spirit', serif;
+    font-family: 'new-spirit-condensed', serif;
     font-style: normal;
-    font-weight: 700;
-    font-stretch: condensed;
+    font-weight: 600;
     font-size: 64px;
     line-height: 64px;
     display: flex;

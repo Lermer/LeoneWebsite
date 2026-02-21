@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Leone Ermer - About" pageName="About">
+  <section class="about">
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          Leone Ermer is a Los Angeles–based designer and creative director. Her practice spans brand identity, experiential design, art direction, and visual storytelling.
+        </p>
+        <p class="aspirations-intro">Her work is guided by:</p>
+        <ol>
+          <li>Thoughtful design rooted in concept and intention</li>
+          <li>Work that bridges the gap between art and function</li>
+          <li>Creative expression that is honest and considered</li>
+          <li>Collaboration that elevates every project</li>
+        </ol>
+        <a href="/contact" class="lets-talk">Let's talk.</a>
+      </div>
+      <div class="about-image">
+        <img src="/images/Leone.png" alt="Leone Ermer" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about {
+    min-height: 100vh;
+    background: #FFFFFF;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    column-gap: 20px;
+    padding: 160px 40px 40px 40px;
+    min-height: calc(100vh - 100px);
+  }
+
+  .about-text {
+    grid-column: 3 / 6;
+    align-self: start;
+    padding-top: 40px;
+  }
+
+  .about-text p {
+    font-family: 'new-spirit-condensed', serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 170%;
+    color: #000000;
+    margin: 0 0 24px 0;
+  }
+
+  .aspirations-intro {
+    margin-bottom: 12px !important;
+  }
+
+  .about-text ol {
+    font-family: 'new-spirit-condensed', serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 170%;
+    color: #000000;
+    margin: 0 0 32px 0;
+    padding-left: 24px;
+  }
+
+  .about-text ol li {
+    margin-bottom: 4px;
+  }
+
+  .lets-talk {
+    font-family: 'new-spirit-condensed', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 170%;
+    color: #000000;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+  }
+
+  .lets-talk:hover {
+    opacity: 0.6;
+  }
+
+  .about-image {
+    grid-column: 7 / 9;
+    align-self: end;
+  }
+
+  .about-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  @media (max-width: 900px) {
+    .about-grid {
+      padding: 140px 40px 40px 40px;
+    }
+
+    .about-text {
+      grid-column: 2 / 6;
+      padding-top: 20px;
+    }
+
+    .about-image {
+      grid-column: 6 / 9;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .about-grid {
+      padding: 120px 20px 20px 20px;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .about-text {
+      grid-column: 1;
+      padding-top: 0;
+    }
+
+    .about-image {
+      grid-column: 1;
+      align-self: start;
+    }
+
+    .about-text p,
+    .about-text ol {
+      font-size: 16px;
+    }
+
+    .lets-talk {
+      font-size: 16px;
+    }
+  }
+</style>
